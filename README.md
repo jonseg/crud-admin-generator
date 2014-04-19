@@ -70,7 +70,7 @@ The generated code is fully configurable and editable, you just have to edit the
  - The **controller** you can find it in **/web/controllers/TABLE_NAME/index.php**
  - The **views** are in **/web/views/TABLE_NAME**
 
-It has generated a folder for each table of the database.
+It has generated a folder for each datbase table.
 
 
 Contributing
