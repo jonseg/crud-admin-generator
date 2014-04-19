@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+        <title>{% block title %}Admin Generator{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        {% block head_javascripts %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ app.asset_path }}/favicon.ico" />
+    </head>
+    <body {% block body_params %}{% endblock %}>
+        {% block body %}
+            {% block header %}{% endblock %}
+            {% block container %}{% endblock %}
+            {% block footer %}{% endblock %}
+        {% endblock %}
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

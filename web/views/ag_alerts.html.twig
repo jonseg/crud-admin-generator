@@ -1,0 +1,12 @@
+{% set alertTypeAvaillable = [ 'info', 'success', 'warning', 'danger'] %}
+{% if app.session.flashbag is defined %}
+    {% for alertType in alertTypeAvaillable %}
+        {% for alert in app.session.flashBag.get(alertType) %}
+            <div class="alert alert-{{ alertType }} alert-dismissable">
+                <i class="fa fa-check"></i>
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <b>{{ alert.message }}</b>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
