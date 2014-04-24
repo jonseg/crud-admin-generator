@@ -256,6 +256,10 @@ $console
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'text', array('required' => " . $field_nullable . "));" . "\n";
 						}
 					}
+					else if($table_column['primary'] && !$table_column['auto']){
+							$FIELDS_FOR_FORM .= "" . 
+						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'text', array('required' => " . $field_nullable . "));" . "\n";
+					}
 				}
 			}
 
