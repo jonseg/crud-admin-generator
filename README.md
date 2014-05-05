@@ -52,6 +52,17 @@ Edit the file /path_to/admingenerator/src/app.php and set your database conectio
     ));
 
 
+You need to set the url of the resources folder.
+
+Change this line:
+
+    $app['asset_path'] = '/resources';
+
+For the url of your proyect, for example:
+
+    $app['asset_path'] = 'http://domain.com/crudadmin/resources';
+
+
 Now, execute the command that will generate the CRUD backend:
 
     php console generate:admin
