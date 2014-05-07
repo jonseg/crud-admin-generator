@@ -26,10 +26,10 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'dbs.options' => array(
             'db' => array(
                 'driver'   => 'pdo_mysql',
-                'dbname'   => 'pruebacrud',
+                'dbname'   => 'DATABASE_NAME',
                 'host'     => '127.0.0.1',
-                'user'     => 'root',
-                'password' => 'root',
+                'user'     => 'DATABASE_USER',
+                'password' => 'DATABASE_PASS',
                 'charset'  => 'utf8',
             ),
         )

@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 __BASE_INCLUDES__
 
-$app->get('/login', function(Request $request) use ($app) {
+$app->get($app['login_path'], function(Request $request) use ($app) {
 
     return $app['twig']->render('login.html.twig', array(
         'error'         => $app['security.last_error']($request),
