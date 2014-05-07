@@ -58,7 +58,7 @@ Change this line:
 
     $app['asset_path'] = '/resources';
 
-For the url of your proyect, for example:
+For the url of your project, for example:
 
     $app['asset_path'] = 'http://domain.com/crudadmin/resources';
 
