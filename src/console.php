@@ -168,13 +168,35 @@ $console
 			foreach($table_columns as $table_column){
 				$TABLECOLUMNS_ARRAY .= "\t\t" . "'". $table_column['name'] . "', \n";
 				if(!$table_column['primary'] || ($table_column['primary'] && !$table_column['auto'])){
-					$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
-					$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
+					switch ($table_column['type']){
+						case 'date':
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(), \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(\$row_sql['".$table_column['name']."']), \n";
+							break;
+						default:
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
+							break;
+					}
 
 					$INSERT_QUERY_FIELDS[] = "`" . $table_column['name'] . "`";
-					$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+					switch ($table_column['type']){
+						case 'date':
+							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
+							break;
+						default:
+							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+							break;
+					}
 					$UPDATE_QUERY_FIELDS[] = "`" . $table_column['name'] . "` = ?";
-					$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+					switch ($table_column['type']){
+                                                case 'date':
+							$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
+                                                        break;
+		                                default:
+							$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+							break;
+					}
 
 					if(strpos($table_column['type'], 'text') !== false){
 						$EDIT_FORM_TEMPLATE .= "" . 
@@ -250,6 +272,10 @@ $console
 						if(strpos($table_column['type'], 'text') !== false){
 							$FIELDS_FOR_FORM .= "" . 
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'textarea', array('required' => " . $field_nullable . "));" . "\n";
+						}
+						elseif(strpos($table_column['type'], 'date') !== false){
+							$FIELDS_FOR_FORM .= "" .
+						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'date', array('required' => " . $field_nullable . ", 'input' => 'datetime', 'widget' => 'choice'));" . "\n";
 						}
 						else{
 							$FIELDS_FOR_FORM .= "" . 
