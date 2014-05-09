@@ -26,14 +26,8 @@ $console
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
 		
 		# Check crud-tables
-		$crudtables = $app['db']->fetchAll('SHOW TABLES LIKE "crud-tables"', array());
-		if(count($crudtables)>0){
+		if(array_key_exists('tableTitles',$app['config'])){
 			$tableTitlesEnabled=true;
-			$getTablesNameQuery = "SELECT `table`,title FROM `crud-tables`";
-			$getTablesNameResult = $app['db']->fetchAll($getTablesNameQuery, array());
-			foreach($getTablesNameResult as $getTableNameResult){
-				$tableNames[$getTableNameResult['table']] = $getTableNameResult['title'];
-			}
 		}else{
 			$tableTitlesEnabled=false;
 		}
@@ -50,8 +44,8 @@ $console
 			$_dbTables[] = reset($getTableResult);
 
 		if($tableTitlesEnabled){
-			if(array_key_exists(reset($getTableResult),$tableNames)){
-				$tableTitle=$tableNames[reset($getTableResult)];
+			if(array_key_exists(reset($getTableResult),$app['config']['tableTitles'])){
+				$tableTitle=$app['config']['tableTitles'][reset($getTableResult)];
 			}
 		}
 		if($tableTitle=='') $tableTitle=reset($getTableResult);

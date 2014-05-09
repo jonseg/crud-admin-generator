@@ -37,6 +37,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
             ),
         )
 ));
+$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/settings.yml'));
 
 $app['asset_path'] = '/resources';
 $app['debug'] = true;
