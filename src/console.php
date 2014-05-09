@@ -24,6 +24,19 @@ $console
     ->setDefinition(array())
     ->setDescription("Generate administrator")
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
+		
+		# Check crud-tables
+		$crudtables = $app['db']->fetchAll('SHOW TABLES LIKE "crud-tables"', array());
+		if(count($crudtables)>0){
+			$tableTitlesEnabled=true;
+			$getTablesNameQuery = "SELECT `table`,title FROM `crud-tables`";
+			$getTablesNameResult = $app['db']->fetchAll($getTablesNameQuery, array());
+			foreach($getTablesNameResult as $getTableNameResult){
+				$tableNames[$getTableNameResult['table']] = $getTableNameResult['title'];
+			}
+		}else{
+			$tableTitlesEnabled=false;
+		}
 
 	    $getTablesQuery = "SHOW TABLES";
 	    $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());  	
@@ -32,12 +45,21 @@ $console
 	    $dbTables = array();
 
 	    foreach($getTablesResult as $getTableResult){
+	    	$tableTitle='';
 
 			$_dbTables[] = reset($getTableResult);
 
+		if($tableTitlesEnabled){
+			if(array_key_exists(reset($getTableResult),$tableNames)){
+				$tableTitle=$tableNames[reset($getTableResult)];
+			}
+		}
+		if($tableTitle=='') $tableTitle=reset($getTableResult);
+
 	    	$dbTables[] = array(
 	    		"name" => reset($getTableResult), 
-	    		"columns" => array()
+	    		"columns" => array(),
+			"title" => $tableTitle
 	    	);
 	    }
 
@@ -59,6 +81,7 @@ $console
     		}
 
     		$table_name = $dbTable['name'];
+    		$table_title = $dbTable['title'];
     		$table_columns = array();
     		$primary_key = false;
 
@@ -119,7 +142,8 @@ $console
 
 			$tables[$table_name] = array(
 				"primary_key" => $primary_key,
-				"columns" => $table_columns
+				"columns" => $table_columns,
+				"title" => $table_title
 			);
 
     	}
@@ -132,6 +156,7 @@ $console
 			$table_columns = $table['columns'];
 
 			$TABLENAME = $table_name;
+			$TABLETITLE = $table['title'];
 			$TABLE_PRIMARYKEY = $table['primary_key'];
 
 			$TABLECOLUMNS_ARRAY = "";
@@ -153,7 +178,7 @@ $console
 			"<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit') %}active{% endif %}\">" . "\n" . 
 			"    <a href=\"#\">" . "\n" . 
 			"        <i class=\"fa fa-folder-o\"></i>" . "\n" . 
-			"        <span>" . $TABLENAME . "</span>" . "\n" . 
+			"        <span>" . $TABLETITLE . "</span>" . "\n" . 
 			"        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" . 
 			"    </a>" . "\n" . 
 			"    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" . 
@@ -334,15 +359,18 @@ $console
 			$_list_template = file_get_contents(__DIR__.'/../gen/list.html.twig');
 			$_list_template = str_replace("__TABLENAME__", $TABLENAME, $_list_template);
 			$_list_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_list_template);
+			$_list_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_list_template);
 
 			$_create_template = file_get_contents(__DIR__.'/../gen/create.html.twig');
 			$_create_template = str_replace("__TABLENAME__", $TABLENAME, $_create_template);
 			$_create_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_create_template);
+			$_create_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_create_template);
 			$_create_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_create_template);
 
 			$_edit_template = file_get_contents(__DIR__.'/../gen/edit.html.twig');
 			$_edit_template = str_replace("__TABLENAME__", $TABLENAME, $_edit_template);
 			$_edit_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_edit_template);
+			$_edit_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_edit_template);
 			$_edit_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_edit_template);
 
 			$_menu_template = file_get_contents(__DIR__.'/../gen/menu.html.twig');
