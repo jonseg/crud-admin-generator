@@ -48,7 +48,7 @@ $console
 				$tableTitle=$app['config']['tableTitles'][reset($getTableResult)];
 			}
 		}
-		if($tableTitle=='') $tableTitle=reset($getTableResult);
+		if($tableTitle=='') $tableTitle=ucfirst(strtolower(reset($getTableResult)));
 
 	    	$dbTables[] = array(
 	    		"name" => reset($getTableResult), 
@@ -352,7 +352,6 @@ $console
 
 			$_list_template = file_get_contents(__DIR__.'/../gen/list.html.twig');
 			$_list_template = str_replace("__TABLENAME__", $TABLENAME, $_list_template);
-			$_list_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_list_template);
 			$_list_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_list_template);
 			if(array_key_exists($TABLENAME,$app['config']['customActionsList'])){
 				$_custom_action_list=$app['config']['customActionsList'][$TABLENAME];
@@ -363,13 +362,11 @@ $console
 
 			$_create_template = file_get_contents(__DIR__.'/../gen/create.html.twig');
 			$_create_template = str_replace("__TABLENAME__", $TABLENAME, $_create_template);
-			$_create_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_create_template);
 			$_create_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_create_template);
 			$_create_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_create_template);
 
 			$_edit_template = file_get_contents(__DIR__.'/../gen/edit.html.twig');
 			$_edit_template = str_replace("__TABLENAME__", $TABLENAME, $_edit_template);
-			$_edit_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_edit_template);
 			$_edit_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_edit_template);
 			$_edit_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_edit_template);
 
