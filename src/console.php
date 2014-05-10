@@ -18,12 +18,38 @@ use Symfony\Component\Console\Input\InputOption;
 use Doctrine\DBAL\Schema\Table;
 
 $console = new Application('CRUD Admin Generator command instalation', '1.0');
-
+//$app = new Application();
 $console
     ->register('generate:admin')
     ->setDefinition(array())
     ->setDescription("Generate administrator")
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
+
+		$dialog = (new Symfony\Component\Console\Application)->getHelperSet()->get('dialog');
+		$output->writeln('<info>Creating the "src/app.php" file</info>');
+		$output->writeln('<comment>Some parameters of your database are missing. Please provide them.</comment>');
+		$database_driver = $dialog->ask($output,'<question>database_driver</question> (<comment>pdo_mysql</comment>): ');
+		$database_host = $dialog->ask($output,'<question>database_host</question> (<comment>127.0.0.1</comment>): ');
+		//$database_port = $dialog->ask($output,'<question>database_port</question> (<comment>null</comment>): ');
+		$database_name = $dialog->ask($output,'<question>database_name</question> (<comment>symfony</comment>): ');
+		$database_user = $dialog->ask($output,'<question>database_user</question> (<comment>root</comment>): ');
+		$database_password = $dialog->ask($output,'<question>database_password</question> (<comment>null</comment>): ');
+		$database_charset = $dialog->ask($output,'<question>database_charset</question> (<comment>UTF8</comment>): ');
+		$output->writeln('<comment>Insert your admin credentials.</comment>');
+		$admin_username = $dialog->ask($output,'<error>admin_username</error> (<comment>admin</comment>): ');
+		$admin_password = $dialog->ask($output,'<error>admin_password</error> (<comment>foo</comment>): ');
+		$_app = file_get_contents(__DIR__.'/../gen/app.php');
+		$_app = str_replace("__DATABASE_DRIVER__", !empty($database_driver) ? $database_driver : 'pdo_mysql', $_app) ;
+		$_app = str_replace("__DATABASE_HOST__", !empty($database_host) ? $database_host : '127.0.0.1', $_app) ;
+		$_app = str_replace("__DATABASE_NAME__", !empty($database_name) ? $database_name : 'symfony', $_app) ;
+		$_app = str_replace("__DATABASE_USER__", !empty($database_user) ? $database_user : 'root', $_app) ;
+		$_app = str_replace("__DATABASE_PASS__", !empty($database_password) ? $database_password : 'null', $_app) ;
+		$_app = str_replace("__DATABASE_CHARSET__", !empty($database_charset) ? $database_charset : 'UTF8', $_app) ;
+		$_app = str_replace("__ADMIN_USERNAME__", !empty($admin_username) ? $admin_username : 'admin', $_app) ;
+		$_app = str_replace("__ADMIN_PASSWORD__", !empty($admin_password) ? (new \Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder())->encodePassword($admin_password, '') : (new \Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder())->encodePassword('foo', ''), $_app) ;
+		$fp = fopen(__DIR__."/../src/app.php", "w+");
+		fwrite($fp, $_app);
+		fclose($fp);
 
 	    $getTablesQuery = "SHOW TABLES";
 	    $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());  	
