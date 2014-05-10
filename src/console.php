@@ -354,6 +354,12 @@ $console
 			$_list_template = str_replace("__TABLENAME__", $TABLENAME, $_list_template);
 			$_list_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_list_template);
 			$_list_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_list_template);
+			if(array_key_exists($TABLENAME,$app['config']['customActionsList'])){
+				$_custom_action_list=$app['config']['customActionsList'][$TABLENAME];
+			}else{
+				$_custom_action_list='';
+			}
+			$_list_template = str_replace("__CUSTOMACTIONLIST__", $_custom_action_list, $_list_template);
 
 			$_create_template = file_get_contents(__DIR__.'/../gen/create.html.twig');
 			$_create_template = str_replace("__TABLENAME__", $TABLENAME, $_create_template);
