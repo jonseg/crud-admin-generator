@@ -31,15 +31,15 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
             'db' => array(
                 'driver'   => 'pdo_mysql',
                 'dbname'   => $app['config']['dbconfig']['dbname'],
-                'host'     => $app['config']['dbconfig']['dbhost'],
-                'user'     => $app['config']['dbconfig']['dbuser'],
-                'password' => $app['config']['dbconfig']['dbpass'],
+                'host'     => $app['config']['dbconfig']['host'],
+                'user'     => $app['config']['dbconfig']['user'],
+                'password' => $app['config']['dbconfig']['pass'],
                 'charset'  => 'utf8',
             ),
         )
 ));
 
-$app['asset_path'] = '/resources';
+$app['asset_path'] = $app['config']['asset_path'];
 $app['debug'] = true;
 
 return $app;
