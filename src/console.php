@@ -25,89 +25,72 @@ $console
     ->setDescription("Generate administrator")
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
 
-	    $getTablesQuery = "SHOW TABLES";
-	    $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());  	
+	    /** @var Doctrine\DBAL\Schema\AbstractSchemaManager $sm */
+	    $sm = $app['db']->getSchemaManager();
 
-	    $_dbTables = array();
-	    $dbTables = array();
-
-	    foreach($getTablesResult as $getTableResult){
-
-			$_dbTables[] = reset($getTableResult);
-
-	    	$dbTables[] = array(
-	    		"name" => reset($getTableResult), 
-	    		"columns" => array()
-	    	);
-	    }
-
-    	foreach($dbTables as $dbTableKey => $dbTable){
-		    $getTableColumnsQuery = "SHOW COLUMNS FROM `" . $dbTable['name'] . "`";
-		    $getTableColumnsResult = $app['db']->fetchAll($getTableColumnsQuery, array());    
-
-		    foreach($getTableColumnsResult as $getTableColumnResult){
-		    	$dbTables[$dbTableKey]['columns'][] = $getTableColumnResult;
-		    }
-
-    	}
+	    $dbTables = $sm->listTables();
+	    $_dbTables = $sm->listTableNames();
 
 		$tables = array();
     	foreach($dbTables as $dbTable){
+		    $columns = $dbTable->getColumns();
 
-    		if(count($dbTable['columns']) <= 1){
+    		if(count($columns) <= 1){
     			continue;
     		}
 
-    		$table_name = $dbTable['name'];
+    		$table_name = $dbTable->getName();
     		$table_columns = array();
     		$primary_key = false;
 
     		$primary_keys = 0;
     		$primary_keys_auto = 0;
-    		foreach($dbTable['columns'] as $column){
-    			if($column['Key'] == "PRI"){
+    		foreach($columns as $column){
+    			if (in_array($column->getName(), $dbTable->getPrimaryKeyColumns())) {
     				$primary_keys++;
-    			}    			
-    			if($column['Extra'] == "auto_increment"){
+    			}
+    			if($column->getAutoincrement()){
     				$primary_keys_auto++;
-    			}    			
+    			}
     		}
 
     		if($primary_keys === 1 || ($primary_keys > 1 && $primary_keys_auto === 1)){
 
-	    		foreach($dbTable['columns'] as $column){
+	    		foreach($columns as $column){
 
 	    			$external_table = false;
 
 	    			if($primary_keys > 1 && $primary_keys_auto == 1){
-		    			if($column['Extra'] == "auto_increment"){
-		    				$primary_key = $column['Field'];
+		    			if($column->getAutoincrement()){
+		    				$primary_key = $column->getName();
 		    			}
 	    			}
 	    			else if($primary_keys == 1){
-		    			if($column['Key'] == "PRI"){
-		    				$primary_key = $column['Field'];
+		    			if(in_array($column->getName(), $dbTable->getPrimaryKeyColumns())){
+		    				$primary_key = $column->getName();
 		    			}
 		    		}
 		    		else{
 		    			continue 2;
 		    		}
 
-					if(substr($column['Field'], -3) == "_id"){
-					    $_table_name = substr($column['Field'], 0, -3);
+					if(substr($column->getName(), -3) == "_id"){
+					    $_table_name = substr($column->getName(), 0, -3);
 
 					    if(in_array($_table_name, $_dbTables)){
 					        $external_table = $_table_name;
 					    }
 					}
 
+				    $is_primary_key = in_array($column->getName(), $dbTable->getPrimaryKeyColumns());
+
 	    			$table_columns[] = array(
-	    				"name" => $column['Field'],
-	    				"primary" => $column['Field'] == $primary_key ? true : false,
-	    				"nullable" => $column['Null'] == "NO" ? true : false,
-	    				"auto" => $column['Extra'] == "auto_increment" ? true : false,
-	    				"external" => $column['Field'] != $primary_key ? $external_table : false,
-	    				"type" => $column['Type']
+	    				"name" => $column->getName(),
+	    				"primary" => $is_primary_key,
+	    				"nullable" => !$column->getNotnull(),
+	    				"auto" => $column->getAutoincrement(),
+	    				"external" => $is_primary_key ? false : $external_table,
+	    				"type" => $column->getType()->getName(),
 	    			);
 	    		}
 
