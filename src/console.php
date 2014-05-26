@@ -166,21 +166,42 @@ $console
 			$UPDATE_QUERY_FIELDS = array();
 			$UPDATE_EXECUTE_FIELDS = array();
 
-			$EDIT_FORM_TEMPLATE = "";
+         $EDIT_FORM_TEMPLATE = "";
+         $custom_menu=array();
+         if(array_key_exists('custom_menu',$app['config']) AND array_key_exists($TABLENAME,$app['config']['custom_menu'])){
+            if(is_array($app['config']['custom_menu'][$TABLENAME])){
+               $custom_menu=$app['config']['custom_menu'][$TABLENAME];
+            }else{
+               $custom_menu[]=$app['config']['custom_menu'][$TABLENAME];
+            }
+         }
 
-			$MENU_OPTIONS .= "" . 
-			"<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit') %}active{% endif %}\">" . "\n" . 
-			"    <a href=\"#\">" . "\n" . 
-			"        <i class=\"fa fa-folder-o\"></i>" . "\n" . 
-			"        <span>" . $TABLETITLE . "</span>" . "\n" . 
-			"        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" . 
-			"    </a>" . "\n" . 
-			"    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" . 
-			"        <li {% if option is defined and option == '" . $TABLENAME . "_list' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_list') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> List</a></li>" . "\n" . 
-			"        <li {% if option is defined and option == '" . $TABLENAME . "_create' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_create') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> Create</a></li>" . "\n" . 
-			"    </ul>" . "\n" . 
-			"</li>" . "\n\n";
+         $MENU_OPTIONS .= "" .
+         "<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit' " ;
+         foreach($custom_menu as $menu){
+            $MENU_OPTIONS .= " or option == '" . $menu['path'] . "'";
+         }
+         $MENU_OPTIONS .= "" .
+         ") %}active{% endif %}\">" . "\n" .
+         "    <a href=\"#\">" . "\n" .
+         "        <i class=\"fa fa-folder-o\"></i>" . "\n" .
+         "        <span>" . $TABLETITLE . "</span>" . "\n" .
+         "        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" .
+         "    </a>" . "\n" .
+         "    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" .
+         "        <li {% if option is defined and option == '" . $TABLENAME . "_list' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_list') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> List</a></li>" . "\n" .
+         "        <li {% if option is defined and option == '" . $TABLENAME . "_create' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_create') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> Create</a></li>" . "\n";
 
+         foreach($custom_menu as $menu){
+            $MENU_OPTIONS .= "" .
+            "        <li {% if option is defined and option == '" . $menu['path'] . "' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $menu['path'] . "') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> " . $menu['name'] . "</a></li>" . "\n" ;
+         }
+
+
+         $MENU_OPTIONS .= "" .
+         "    </ul>" . "\n" .
+         "</li>" . "\n\n";
+			
 			$BASE_INCLUDES .= "require_once __DIR__.'/" . $TABLENAME . "/index.php';" . "\n";
 
 			$count_externals = 0;
