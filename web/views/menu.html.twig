@@ -1,4 +1,199 @@
 {% extends 'ag_menu.html.twig' %}
 
 {% block menu %}
+
+<li class="treeview {% if option is defined and (option == 'apache2_namevirtualhost_list' or option == 'apache2_namevirtualhost_create' or option == 'apache2_namevirtualhost_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>apache2_namevirtualhost</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'apache2_namevirtualhost_list' %}class="active"{% endif %}><a href="{{ path('apache2_namevirtualhost_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'apache2_namevirtualhost_create' %}class="active"{% endif %}><a href="{{ path('apache2_namevirtualhost_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'apache2_vhosts_list' or option == 'apache2_vhosts_create' or option == 'apache2_vhosts_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>apache2_vhosts</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'apache2_vhosts_list' %}class="active"{% endif %}><a href="{{ path('apache2_vhosts_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'apache2_vhosts_create' %}class="active"{% endif %}><a href="{{ path('apache2_vhosts_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'group_list' or option == 'group_create' or option == 'group_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>group</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'group_list' %}class="active"{% endif %}><a href="{{ path('group_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'group_create' %}class="active"{% endif %}><a href="{{ path('group_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'group_vars_list' or option == 'group_vars_create' or option == 'group_vars_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>group_vars</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'group_vars_list' %}class="active"{% endif %}><a href="{{ path('group_vars_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'group_vars_create' %}class="active"{% endif %}><a href="{{ path('group_vars_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'host_list' or option == 'host_create' or option == 'host_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>host</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'host_list' %}class="active"{% endif %}><a href="{{ path('host_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'host_create' %}class="active"{% endif %}><a href="{{ path('host_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'host_group_list' or option == 'host_group_create' or option == 'host_group_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>host_group</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'host_group_list' %}class="active"{% endif %}><a href="{{ path('host_group_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'host_group_create' %}class="active"{% endif %}><a href="{{ path('host_group_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'host_vars_list' or option == 'host_vars_create' or option == 'host_vars_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>host_vars</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'host_vars_list' %}class="active"{% endif %}><a href="{{ path('host_vars_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'host_vars_create' %}class="active"{% endif %}><a href="{{ path('host_vars_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'interfaces_list' or option == 'interfaces_create' or option == 'interfaces_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>interfaces</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'interfaces_list' %}class="active"{% endif %}><a href="{{ path('interfaces_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'interfaces_create' %}class="active"{% endif %}><a href="{{ path('interfaces_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'interfaces_rules_list' or option == 'interfaces_rules_create' or option == 'interfaces_rules_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>interfaces_rules</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'interfaces_rules_list' %}class="active"{% endif %}><a href="{{ path('interfaces_rules_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'interfaces_rules_create' %}class="active"{% endif %}><a href="{{ path('interfaces_rules_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'iptables_policies_list' or option == 'iptables_policies_create' or option == 'iptables_policies_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>iptables_policies</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'iptables_policies_list' %}class="active"{% endif %}><a href="{{ path('iptables_policies_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'iptables_policies_create' %}class="active"{% endif %}><a href="{{ path('iptables_policies_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'iptables_rules_list' or option == 'iptables_rules_create' or option == 'iptables_rules_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>iptables_rules</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'iptables_rules_list' %}class="active"{% endif %}><a href="{{ path('iptables_rules_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'iptables_rules_create' %}class="active"{% endif %}><a href="{{ path('iptables_rules_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'roletable_list' or option == 'roletable_create' or option == 'roletable_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>roletable</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'roletable_list' %}class="active"{% endif %}><a href="{{ path('roletable_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'roletable_create' %}class="active"{% endif %}><a href="{{ path('roletable_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'single_var_list' or option == 'single_var_create' or option == 'single_var_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>single_var</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'single_var_list' %}class="active"{% endif %}><a href="{{ path('single_var_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'single_var_create' %}class="active"{% endif %}><a href="{{ path('single_var_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'sshkeys_list' or option == 'sshkeys_create' or option == 'sshkeys_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>sshkeys</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'sshkeys_list' %}class="active"{% endif %}><a href="{{ path('sshkeys_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'sshkeys_create' %}class="active"{% endif %}><a href="{{ path('sshkeys_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'sudoers_list' or option == 'sudoers_create' or option == 'sudoers_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>sudoers</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'sudoers_list' %}class="active"{% endif %}><a href="{{ path('sudoers_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'sudoers_create' %}class="active"{% endif %}><a href="{{ path('sudoers_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+<li class="treeview {% if option is defined and (option == 'zabbix_userparameters_list' or option == 'zabbix_userparameters_create' or option == 'zabbix_userparameters_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>zabbix_userparameters</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'zabbix_userparameters_list' %}class="active"{% endif %}><a href="{{ path('zabbix_userparameters_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'zabbix_userparameters_create' %}class="active"{% endif %}><a href="{{ path('zabbix_userparameters_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+    </ul>
+</li>
+
+
+
 {% endblock %}

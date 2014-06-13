@@ -185,5 +185,6 @@ $app->match('/__TABLENAME__/delete/{id}', function ($id) use ($app) {
 
 
 
-
-
+if(file_exists(__DIR__.'/custom.php')){
+	require_once __DIR__.'/custom.php';
+}

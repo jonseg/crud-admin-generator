@@ -24,6 +24,13 @@ $console
     ->setDefinition(array())
     ->setDescription("Generate administrator")
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
+		
+		# Check crud-tables
+		if(array_key_exists('tableTitles',$app['config'])){
+			$tableTitlesEnabled=true;
+		}else{
+			$tableTitlesEnabled=false;
+		}
 
 	    $getTablesQuery = "SHOW TABLES";
 	    $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());  	
@@ -32,12 +39,21 @@ $console
 	    $dbTables = array();
 
 	    foreach($getTablesResult as $getTableResult){
+	    	$tableTitle='';
 
 			$_dbTables[] = reset($getTableResult);
 
+		if($tableTitlesEnabled){
+			if(array_key_exists(reset($getTableResult),$app['config']['tableTitles'])){
+				$tableTitle=$app['config']['tableTitles'][reset($getTableResult)];
+			}
+		}
+		if($tableTitle=='') $tableTitle=ucfirst(strtolower(reset($getTableResult)));
+
 	    	$dbTables[] = array(
 	    		"name" => reset($getTableResult), 
-	    		"columns" => array()
+	    		"columns" => array(),
+			"title" => $tableTitle
 	    	);
 	    }
 
@@ -59,6 +75,7 @@ $console
     		}
 
     		$table_name = $dbTable['name'];
+    		$table_title = $dbTable['title'];
     		$table_columns = array();
     		$primary_key = false;
 
@@ -119,7 +136,8 @@ $console
 
 			$tables[$table_name] = array(
 				"primary_key" => $primary_key,
-				"columns" => $table_columns
+				"columns" => $table_columns,
+				"title" => $table_title
 			);
 
     	}
@@ -132,6 +150,7 @@ $console
 			$table_columns = $table['columns'];
 
 			$TABLENAME = $table_name;
+			$TABLETITLE = $table['title'];
 			$TABLE_PRIMARYKEY = $table['primary_key'];
 
 			$TABLECOLUMNS_ARRAY = "";
@@ -147,34 +166,77 @@ $console
 			$UPDATE_QUERY_FIELDS = array();
 			$UPDATE_EXECUTE_FIELDS = array();
 
-			$EDIT_FORM_TEMPLATE = "";
+         $EDIT_FORM_TEMPLATE = "";
+         $custom_menu=array();
+         if(array_key_exists('custom_menu',$app['config']) AND array_key_exists($TABLENAME,$app['config']['custom_menu'])){
+            if(is_array($app['config']['custom_menu'][$TABLENAME])){
+               $custom_menu=$app['config']['custom_menu'][$TABLENAME];
+            }else{
+               $custom_menu[]=$app['config']['custom_menu'][$TABLENAME];
+            }
+         }
 
-			$MENU_OPTIONS .= "" . 
-			"<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit') %}active{% endif %}\">" . "\n" . 
-			"    <a href=\"#\">" . "\n" . 
-			"        <i class=\"fa fa-folder-o\"></i>" . "\n" . 
-			"        <span>" . $TABLENAME . "</span>" . "\n" . 
-			"        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" . 
-			"    </a>" . "\n" . 
-			"    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" . 
-			"        <li {% if option is defined and option == '" . $TABLENAME . "_list' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_list') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> List</a></li>" . "\n" . 
-			"        <li {% if option is defined and option == '" . $TABLENAME . "_create' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_create') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> Create</a></li>" . "\n" . 
-			"    </ul>" . "\n" . 
-			"</li>" . "\n\n";
+         $MENU_OPTIONS .= "" .
+         "<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit' " ;
+         foreach($custom_menu as $menu){
+            $MENU_OPTIONS .= " or option == '" . $menu['path'] . "'";
+         }
+         $MENU_OPTIONS .= "" .
+         ") %}active{% endif %}\">" . "\n" .
+         "    <a href=\"#\">" . "\n" .
+         "        <i class=\"fa fa-folder-o\"></i>" . "\n" .
+         "        <span>" . $TABLETITLE . "</span>" . "\n" .
+         "        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" .
+         "    </a>" . "\n" .
+         "    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" .
+         "        <li {% if option is defined and option == '" . $TABLENAME . "_list' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_list') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> List</a></li>" . "\n" .
+         "        <li {% if option is defined and option == '" . $TABLENAME . "_create' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_create') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> Create</a></li>" . "\n";
 
+         foreach($custom_menu as $menu){
+            $MENU_OPTIONS .= "" .
+            "        <li {% if option is defined and option == '" . $menu['path'] . "' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $menu['path'] . "') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> " . $menu['name'] . "</a></li>" . "\n" ;
+         }
+
+
+         $MENU_OPTIONS .= "" .
+         "    </ul>" . "\n" .
+         "</li>" . "\n\n";
+			
 			$BASE_INCLUDES .= "require_once __DIR__.'/" . $TABLENAME . "/index.php';" . "\n";
 
 			$count_externals = 0;
 			foreach($table_columns as $table_column){
 				$TABLECOLUMNS_ARRAY .= "\t\t" . "'". $table_column['name'] . "', \n";
 				if(!$table_column['primary'] || ($table_column['primary'] && !$table_column['auto'])){
-					$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
-					$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
+					switch ($table_column['type']){
+						case 'date':
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(), \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(\$row_sql['".$table_column['name']."']), \n";
+							break;
+						default:
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
+							break;
+					}
 
 					$INSERT_QUERY_FIELDS[] = "`" . $table_column['name'] . "`";
-					$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+					switch ($table_column['type']){
+						case 'date':
+							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
+							break;
+						default:
+							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+							break;
+					}
 					$UPDATE_QUERY_FIELDS[] = "`" . $table_column['name'] . "` = ?";
-					$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+					switch ($table_column['type']){
+                                                case 'date':
+							$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
+                                                        break;
+		                                default:
+							$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+							break;
+					}
 
 					if(strpos($table_column['type'], 'text') !== false){
 						$EDIT_FORM_TEMPLATE .= "" . 
@@ -251,6 +313,10 @@ $console
 							$FIELDS_FOR_FORM .= "" . 
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'textarea', array('required' => " . $field_nullable . "));" . "\n";
 						}
+						elseif(strpos($table_column['type'], 'date') !== false){
+							$FIELDS_FOR_FORM .= "" .
+						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'date', array('required' => " . $field_nullable . ", 'input' => 'datetime', 'widget' => 'choice'));" . "\n";
+						}
 						else{
 							$FIELDS_FOR_FORM .= "" . 
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'text', array('required' => " . $field_nullable . "));" . "\n";
@@ -307,16 +373,22 @@ $console
 
 			$_list_template = file_get_contents(__DIR__.'/../gen/list.html.twig');
 			$_list_template = str_replace("__TABLENAME__", $TABLENAME, $_list_template);
-			$_list_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_list_template);
+			$_list_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_list_template);
+			if(array_key_exists($TABLENAME,$app['config']['customActionsList'])){
+				$_custom_action_list=$app['config']['customActionsList'][$TABLENAME];
+			}else{
+				$_custom_action_list='';
+			}
+			$_list_template = str_replace("__CUSTOMACTIONLIST__", $_custom_action_list, $_list_template);
 
 			$_create_template = file_get_contents(__DIR__.'/../gen/create.html.twig');
 			$_create_template = str_replace("__TABLENAME__", $TABLENAME, $_create_template);
-			$_create_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_create_template);
+			$_create_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_create_template);
 			$_create_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_create_template);
 
 			$_edit_template = file_get_contents(__DIR__.'/../gen/edit.html.twig');
 			$_edit_template = str_replace("__TABLENAME__", $TABLENAME, $_edit_template);
-			$_edit_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_edit_template);
+			$_edit_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_edit_template);
 			$_edit_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_edit_template);
 
 			$_menu_template = file_get_contents(__DIR__.'/../gen/menu.html.twig');

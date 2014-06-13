@@ -16,7 +16,9 @@ require_once __DIR__.'/../../src/app.php';
 
 
 __BASE_INCLUDES__
-
+if(file_exists(__DIR__.'/custom.php')){
+        require_once __DIR__.'/custom.php';
+}
 
 $app->match('/', function () use ($app) {
 

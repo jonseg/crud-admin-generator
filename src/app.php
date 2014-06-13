@@ -24,21 +24,22 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/settings.yml'));
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
         'dbs.options' => array(
             'db' => array(
                 'driver'   => 'pdo_mysql',
-                'dbname'   => 'DATABASE_NAME',
-                'host'     => '127.0.0.1',
-                'user'     => 'DATABASE_USER',
-                'password' => 'DATABASE_PASS',
+                'dbname'   => $app['config']['dbconfig']['dbname'],
+                'host'     => $app['config']['dbconfig']['host'],
+                'user'     => $app['config']['dbconfig']['user'],
+                'password' => $app['config']['dbconfig']['pass'],
                 'charset'  => 'utf8',
             ),
         )
 ));
 
-$app['asset_path'] = '/resources';
+$app['asset_path'] = $app['config']['asset_path'];
 $app['debug'] = true;
 
 return $app;
