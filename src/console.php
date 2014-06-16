@@ -78,6 +78,7 @@ $console
     		$table_title = $dbTable['title'];
     		$table_columns = array();
     		$primary_key = false;
+			$enabled = false;
 
     		$primary_keys = 0;
     		$primary_keys_auto = 0;
@@ -117,6 +118,7 @@ $console
 					        $external_table = $_table_name;
 					    }
 					}
+					if($column['Field'] == 'enabled'){$enabled=true;}
 
 	    			$table_columns[] = array(
 	    				"name" => $column['Field'],
@@ -124,7 +126,7 @@ $console
 	    				"nullable" => $column['Null'] == "NO" ? true : false,
 	    				"auto" => $column['Extra'] == "auto_increment" ? true : false,
 	    				"external" => $column['Field'] != $primary_key ? $external_table : false,
-	    				"type" => $column['Type']
+	    				"type" => $column['Type'],
 	    			);
 	    		}
 
@@ -137,7 +139,8 @@ $console
 			$tables[$table_name] = array(
 				"primary_key" => $primary_key,
 				"columns" => $table_columns,
-				"title" => $table_title
+				"title" => $table_title,
+				"enabled" => $enabled
 			);
 
     	}
@@ -341,6 +344,12 @@ $console
 	            "\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] = \$row_sql[\$table_columns[\$i]];" . "\n";
 			}
 
+					if($table['enabled']){
+						$ENABLED_ACTIONS='{% if row[\'enabled\'] == 0 %}<a href="{{ path(\''. $TABLENAME .'_enable\', { id: row[primary_key] }) }}" class="btn btn-primary btn-xs">Enable</a>{% else %}<a href="{{ path(\''. $TABLENAME .'_disable\', { id: row[primary_key] }) }}" class="btn btn-danger btn-xs">Disable</a>{% endif %}';
+					}else{
+						$ENABLED_ACTIONS='';
+					}
+
 
 			$INSERT_QUERY_VALUES = array();
 			foreach($INSERT_QUERY_FIELDS as $INSERT_QUERY_FIELD){
@@ -380,6 +389,7 @@ $console
 				$_custom_action_list='';
 			}
 			$_list_template = str_replace("__CUSTOMACTIONLIST__", $_custom_action_list, $_list_template);
+			$_list_template = str_replace("__ENABLED_ACTIONS__", $ENABLED_ACTIONS, $_list_template);
 
 			$_create_template = file_get_contents(__DIR__.'/../gen/create.html.twig');
 			$_create_template = str_replace("__TABLENAME__", $TABLENAME, $_create_template);

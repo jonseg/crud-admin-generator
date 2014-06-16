@@ -15,22 +15,17 @@ require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/../../src/app.php';
 
 
-require_once __DIR__.'/apache2_namevirtualhost/index.php';
-require_once __DIR__.'/apache2_vhosts/index.php';
-require_once __DIR__.'/group/index.php';
-require_once __DIR__.'/group_vars/index.php';
-require_once __DIR__.'/host/index.php';
-require_once __DIR__.'/host_group/index.php';
-require_once __DIR__.'/host_vars/index.php';
-require_once __DIR__.'/interfaces/index.php';
-require_once __DIR__.'/interfaces_rules/index.php';
-require_once __DIR__.'/iptables_policies/index.php';
-require_once __DIR__.'/iptables_rules/index.php';
-require_once __DIR__.'/roletable/index.php';
-require_once __DIR__.'/single_var/index.php';
-require_once __DIR__.'/sshkeys/index.php';
-require_once __DIR__.'/sudoers/index.php';
-require_once __DIR__.'/zabbix_userparameters/index.php';
+require_once __DIR__.'/backend/index.php';
+require_once __DIR__.'/director/index.php';
+require_once __DIR__.'/director_backend/index.php';
+require_once __DIR__.'/ldirectord_realserver/index.php';
+require_once __DIR__.'/ldirectord_virtual_real_server/index.php';
+require_once __DIR__.'/ldirectord_virtualserver/index.php';
+require_once __DIR__.'/realservertype/index.php';
+require_once __DIR__.'/web/index.php';
+require_once __DIR__.'/web_alias/index.php';
+require_once __DIR__.'/web_redir/index.php';
+require_once __DIR__.'/web_redir_url/index.php';
 
 if(file_exists(__DIR__.'/custom.php')){
         require_once __DIR__.'/custom.php';
