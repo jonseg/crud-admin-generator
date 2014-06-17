@@ -212,6 +212,10 @@ $console
 				$TABLECOLUMNS_ARRAY .= "\t\t" . "'". $table_column['name'] . "', \n";
 				if(!$table_column['primary'] || ($table_column['primary'] && !$table_column['auto'])){
 					switch ($table_column['type']){
+						case 'tinyint(1)':
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => (boolean) 0, \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => (boolean) \$row_sql['".$table_column['name']."'], \n";
+							break;
 						case 'date':
 							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(), \n";
 							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(\$row_sql['".$table_column['name']."']), \n";
@@ -224,6 +228,9 @@ $console
 
 					$INSERT_QUERY_FIELDS[] = "`" . $table_column['name'] . "`";
 					switch ($table_column['type']){
+						case 'tinyint(1)':
+							$INSERT_EXECUTE_FIELDS[] = "(boolean) \$data['" . $table_column['name'] . "']";
+							break;
 						case 'date':
 							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
 							break;
@@ -315,6 +322,10 @@ $console
 						if(strpos($table_column['type'], 'text') !== false){
 							$FIELDS_FOR_FORM .= "" . 
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'textarea', array('required' => " . $field_nullable . "));" . "\n";
+						}
+						elseif($table_column['type']=='tinyint(1)'){
+							$FIELDS_FOR_FORM .= "" .
+							"\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'checkbox', array('required' => false ));" . "\n";
 						}
 						elseif(strpos($table_column['type'], 'date') !== false){
 							$FIELDS_FOR_FORM .= "" .
