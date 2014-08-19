@@ -1,3 +1,4 @@
 vendor/
 src/settings.yml
 composer.lock
+.DS_Store

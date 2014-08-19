@@ -14,6 +14,7 @@
         "symfony/locale": "~2.3", 
         "symfony/yaml": "~2.3",
         "deralex/yaml-config-service-provider": "1.0.x-dev"
+        "symfony/security": "~2.3"        
     },
     "minimum-stability": "dev",
     "autoload": {

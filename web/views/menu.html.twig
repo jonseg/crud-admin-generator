@@ -2,6 +2,7 @@
 
 {% block menu %}
 
+<<<<<<< HEAD
 <li class="treeview {% if option is defined and (option == 'apache2_namevirtualhost_list' or option == 'apache2_namevirtualhost_create' or option == 'apache2_namevirtualhost_edit') %}active{% endif %}">
     <a href="#">
         <i class="fa fa-folder-o"></i>
@@ -191,6 +192,17 @@
     <ul class="treeview-menu" style="display: none;">
         <li {% if option is defined and option == 'zabbix_userparameters_list' %}class="active"{% endif %}><a href="{{ path('zabbix_userparameters_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
         <li {% if option is defined and option == 'zabbix_userparameters_create' %}class="active"{% endif %}><a href="{{ path('zabbix_userparameters_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+=======
+<li class="treeview {% if option is defined and (option == 'usuario_list' or option == 'usuario_create' or option == 'usuario_edit') %}active{% endif %}">
+    <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span>usuario</span>
+        <i class="fa pull-right fa-angle-right"></i>
+    </a>
+    <ul class="treeview-menu" style="display: none;">
+        <li {% if option is defined and option == 'usuario_list' %}class="active"{% endif %}><a href="{{ path('usuario_list') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> List</a></li>
+        <li {% if option is defined and option == 'usuario_create' %}class="active"{% endif %}><a href="{{ path('usuario_create') }}" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Create</a></li>
+>>>>>>> security/master
     </ul>
 </li>
 
