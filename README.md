@@ -32,6 +32,27 @@ Install vendors:
 
 You need point the document root of your virtual host to /path_to/admingenerator/web
 
+This is an example of VirtualHost:
+
+    <VirtualHost *:80>
+        DocumentRoot /path_to/admingenerator/web
+        DirectoryIndex index.php
+        <Directory "/path_to/admingenerator/web">
+            Options Indexes FollowSymLinks
+            Order Allow,Deny
+            Allow from all
+            AllowOverride all
+            <IfModule mod_php5.c>
+                php_admin_flag engine on
+                php_admin_flag safe_mode off
+                php_admin_value open_basedir none
+            </ifModule>
+        </Directory>
+    </VirtualHost>
+    
+You can customize the url using the .htaccess file, maybe this will help you:
+[http://stackoverflow.com/questions/24952846/how-do-i-remove-the-web-from-my-url/24953439#24953439](http://stackoverflow.com/questions/24952846/how-do-i-remove-the-web-from-my-url/24953439#24953439)
+
 
 Generate CRUD backend
 ---------------------
@@ -99,10 +120,10 @@ Some suggestions for improvement could be:
 Author
 ------
 
-* Jon Segador <jonseg@nazcalabs.com>
-* Twitter : *[@jonseg](https://twitter.com/jonseg)*
-* Personal blog: *[http://jonsegador.com/](http://jonsegador.com/)*
-* CRUD Admin Generator webpage: *[http://crud-admin-generator.com](http://crud-admin-generator.com)*
+* Jon Segador <info@jonsegador.com>
+* Personal site: [http://jonsegador.com/](http://jonsegador.com/)
+* Twitter: *[@jonseg](https://twitter.com/jonseg)*
+* CRUD Admin Generator webpage: [http://crud-admin-generator.com](http://crud-admin-generator.com)
 
 
   [1]: http://crud-admin-generator.com
