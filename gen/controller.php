@@ -183,7 +183,24 @@ $app->match('/__TABLENAME__/delete/{id}', function ($id) use ($app) {
 ->bind('__TABLENAME___delete');
 
 
+$app->match('/__TABLENAME__/enable/{id}', function ($id) use ($app) {
+   $sql = "UPDATE __TABLENAME__ SET enabled=1 WHERE id=?";
+   $app['db']->executeUpdate($sql,array($id));
+   return $app->redirect($app['url_generator']->generate('__TABLENAME___list', array()));
+})
+->bind('__TABLENAME___enable');
+
+$app->match('/__TABLENAME__/disable/{id}', function ($id) use ($app) {
+   $sql = "UPDATE __TABLENAME__ SET enabled=0 WHERE id=?";
+   $app['db']->executeUpdate($sql,array($id));
+   return $app->redirect($app['url_generator']->generate('__TABLENAME___list', array()));
+
+})
+->bind('__TABLENAME___disable');
 
 
 
 
+if(file_exists(__DIR__.'/custom.php')){
+	require_once __DIR__.'/custom.php';
+}

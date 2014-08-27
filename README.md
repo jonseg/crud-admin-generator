@@ -72,6 +72,15 @@ Edit the file /path_to/admingenerator/src/app.php and set your database conectio
         )
     ));
 
+Set your username and password (foo by default) data:
+
+    ..
+    'admin' => array('ROLE_ADMIN', '5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg=='),
+    ...
+
+You can obtain your password encoded with the following code:
+
+    echo (new \Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder())->encodePassword('foo', '');
 
 You need to set the url of the resources folder.
 

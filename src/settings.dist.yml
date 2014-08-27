@@ -1,0 +1,9 @@
+dbconfig:
+  dbname: DBNAME
+  host: DBHOST
+  user: DBUSER
+  pass: DBPASS
+
+tableTitles:
+  tableName1: "TableTitle1"
+  tableName2: "Another title"

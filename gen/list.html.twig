@@ -33,7 +33,7 @@
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    __TABLENAMEUP__ list
+                    __TABLENAMETITLE__ list
                 </h1>
             </section>
 
@@ -51,7 +51,7 @@
                             </div><!-- /.box-header -->
 
                             <div class="box-body table-responsive">
-                                <a class="btn btn-primary" href="{{ path('__TABLENAME___create') }}">Create new __TABLENAME__</a><br /><br />
+                                <a class="btn btn-primary" href="{{ path('__TABLENAME___create') }}">Create new __TABLENAMETITLE__</a><br /><br />
                                 <table id="__TABLENAME___list" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
@@ -67,7 +67,7 @@
                                                 {% for table_column in table_columns %}
                                                     <td>{{ row[table_column] }}</td>
                                                 {% endfor %}
-                                                <td><a href="{{ path('__TABLENAME___edit', { id: row[primary_key] }) }}" class="btn btn-primary btn-xs">Edit</a> <a href="{{ path('__TABLENAME___delete', { id: row[primary_key] }) }}" onclick='return confirm_delete();' class="btn btn-danger btn-xs">Delete</a></td>
+                                                <td><a href="{{ path('__TABLENAME___edit', { id: row[primary_key] }) }}" class="btn btn-primary btn-xs">Edit</a> __ENABLED_ACTIONS__<a href="{{ path('__TABLENAME___delete', { id: row[primary_key] }) }}" onclick='return confirm_delete();' class="btn btn-danger btn-xs">Delete</a> __CUSTOMACTIONLIST__</td>
                                             </tr>
                                         {% endfor %}                                        
 

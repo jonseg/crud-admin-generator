@@ -24,6 +24,39 @@ $console
     ->setDefinition(array())
     ->setDescription("Generate administrator")
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
+		
+		# Check crud-tables
+		if(array_key_exists('tableTitles',$app['config'])){
+			$tableTitlesEnabled=true;
+		}else{
+			$tableTitlesEnabled=false;
+		}
+
+		$dialog = (new Symfony\Component\Console\Application)->getHelperSet()->get('dialog');
+		$output->writeln('<info>Creating the "src/app.php" file</info>');
+		$output->writeln('<comment>Some parameters of your database are missing. Please provide them.</comment>');
+		$database_driver = $dialog->ask($output,'<question>database_driver</question> (<comment>pdo_mysql</comment>): ');
+		$database_host = $dialog->ask($output,'<question>database_host</question> (<comment>127.0.0.1</comment>): ');
+		//$database_port = $dialog->ask($output,'<question>database_port</question> (<comment>null</comment>): ');
+		$database_name = $dialog->ask($output,'<question>database_name</question> (<comment>symfony</comment>): ');
+		$database_user = $dialog->ask($output,'<question>database_user</question> (<comment>root</comment>): ');
+		$database_password = $dialog->ask($output,'<question>database_password</question> (<comment>null</comment>): ');
+		$database_charset = $dialog->ask($output,'<question>database_charset</question> (<comment>UTF8</comment>): ');
+		$output->writeln('<comment>Insert your admin credentials.</comment>');
+		$admin_username = $dialog->ask($output,'<error>admin_username</error> (<comment>admin</comment>): ');
+		$admin_password = $dialog->ask($output,'<error>admin_password</error> (<comment>foo</comment>): ');
+		$_app = file_get_contents(__DIR__.'/../gen/app.php');
+		$_app = str_replace("__DATABASE_DRIVER__", !empty($database_driver) ? $database_driver : 'pdo_mysql', $_app) ;
+		$_app = str_replace("__DATABASE_HOST__", !empty($database_host) ? $database_host : '127.0.0.1', $_app) ;
+		$_app = str_replace("__DATABASE_NAME__", !empty($database_name) ? $database_name : 'symfony', $_app) ;
+		$_app = str_replace("__DATABASE_USER__", !empty($database_user) ? $database_user : 'root', $_app) ;
+		$_app = str_replace("__DATABASE_PASS__", !empty($database_password) ? $database_password : 'null', $_app) ;
+		$_app = str_replace("__DATABASE_CHARSET__", !empty($database_charset) ? $database_charset : 'UTF8', $_app) ;
+		$_app = str_replace("__ADMIN_USERNAME__", !empty($admin_username) ? $admin_username : 'admin', $_app) ;
+		$_app = str_replace("__ADMIN_PASSWORD__", !empty($admin_password) ? (new \Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder())->encodePassword($admin_password, '') : (new \Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder())->encodePassword('foo', ''), $_app) ;
+		$fp = fopen(__DIR__."/../src/app.php", "w+");
+		fwrite($fp, $_app);
+		fclose($fp);
 
 	    $getTablesQuery = "SHOW TABLES";
 	    $getTablesResult = $app['db']->fetchAll($getTablesQuery, array());  	
@@ -32,12 +65,21 @@ $console
 	    $dbTables = array();
 
 	    foreach($getTablesResult as $getTableResult){
+	    	$tableTitle='';
 
 			$_dbTables[] = reset($getTableResult);
 
+		if($tableTitlesEnabled){
+			if(array_key_exists(reset($getTableResult),$app['config']['tableTitles'])){
+				$tableTitle=$app['config']['tableTitles'][reset($getTableResult)];
+			}
+		}
+		if($tableTitle=='') $tableTitle=ucfirst(strtolower(reset($getTableResult)));
+
 	    	$dbTables[] = array(
 	    		"name" => reset($getTableResult), 
-	    		"columns" => array()
+	    		"columns" => array(),
+			"title" => $tableTitle
 	    	);
 	    }
 
@@ -59,8 +101,10 @@ $console
     		}
 
     		$table_name = $dbTable['name'];
+    		$table_title = $dbTable['title'];
     		$table_columns = array();
     		$primary_key = false;
+			$enabled = false;
 
     		$primary_keys = 0;
     		$primary_keys_auto = 0;
@@ -100,6 +144,7 @@ $console
 					        $external_table = $_table_name;
 					    }
 					}
+					if($column['Field'] == 'enabled'){$enabled=true;}
 
 	    			$table_columns[] = array(
 	    				"name" => $column['Field'],
@@ -107,7 +152,7 @@ $console
 	    				"nullable" => $column['Null'] == "NO" ? true : false,
 	    				"auto" => $column['Extra'] == "auto_increment" ? true : false,
 	    				"external" => $column['Field'] != $primary_key ? $external_table : false,
-	    				"type" => $column['Type']
+	    				"type" => $column['Type'],
 	    			);
 	    		}
 
@@ -119,7 +164,9 @@ $console
 
 			$tables[$table_name] = array(
 				"primary_key" => $primary_key,
-				"columns" => $table_columns
+				"columns" => $table_columns,
+				"title" => $table_title,
+				"enabled" => $enabled
 			);
 
     	}
@@ -132,6 +179,7 @@ $console
 			$table_columns = $table['columns'];
 
 			$TABLENAME = $table_name;
+			$TABLETITLE = $table['title'];
 			$TABLE_PRIMARYKEY = $table['primary_key'];
 
 			$TABLECOLUMNS_ARRAY = "";
@@ -147,34 +195,84 @@ $console
 			$UPDATE_QUERY_FIELDS = array();
 			$UPDATE_EXECUTE_FIELDS = array();
 
-			$EDIT_FORM_TEMPLATE = "";
+         $EDIT_FORM_TEMPLATE = "";
+         $custom_menu=array();
+         if(array_key_exists('custom_menu',$app['config']) AND array_key_exists($TABLENAME,$app['config']['custom_menu'])){
+            if(is_array($app['config']['custom_menu'][$TABLENAME])){
+               $custom_menu=$app['config']['custom_menu'][$TABLENAME];
+            }else{
+               $custom_menu[]=$app['config']['custom_menu'][$TABLENAME];
+            }
+         }
 
-			$MENU_OPTIONS .= "" . 
-			"<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit') %}active{% endif %}\">" . "\n" . 
-			"    <a href=\"#\">" . "\n" . 
-			"        <i class=\"fa fa-folder-o\"></i>" . "\n" . 
-			"        <span>" . $TABLENAME . "</span>" . "\n" . 
-			"        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" . 
-			"    </a>" . "\n" . 
-			"    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" . 
-			"        <li {% if option is defined and option == '" . $TABLENAME . "_list' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_list') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> List</a></li>" . "\n" . 
-			"        <li {% if option is defined and option == '" . $TABLENAME . "_create' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_create') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> Create</a></li>" . "\n" . 
-			"    </ul>" . "\n" . 
-			"</li>" . "\n\n";
+         $MENU_OPTIONS .= "" .
+         "<li class=\"treeview {% if option is defined and (option == '" . $TABLENAME . "_list' or option == '" . $TABLENAME . "_create' or option == '" . $TABLENAME . "_edit' " ;
+         foreach($custom_menu as $menu){
+            $MENU_OPTIONS .= " or option == '" . $menu['path'] . "'";
+         }
+         $MENU_OPTIONS .= "" .
+         ") %}active{% endif %}\">" . "\n" .
+         "    <a href=\"#\">" . "\n" .
+         "        <i class=\"fa fa-folder-o\"></i>" . "\n" .
+         "        <span>" . $TABLETITLE . "</span>" . "\n" .
+         "        <i class=\"fa pull-right fa-angle-right\"></i>" . "\n" .
+         "    </a>" . "\n" .
+         "    <ul class=\"treeview-menu\" style=\"display: none;\">" . "\n" .
+         "        <li {% if option is defined and option == '" . $TABLENAME . "_list' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_list') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> List</a></li>" . "\n" .
+         "        <li {% if option is defined and option == '" . $TABLENAME . "_create' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $TABLENAME . "_create') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> Create</a></li>" . "\n";
 
+         foreach($custom_menu as $menu){
+            $MENU_OPTIONS .= "" .
+            "        <li {% if option is defined and option == '" . $menu['path'] . "' %}class=\"active\"{% endif %}><a href=\"{{ path('" . $menu['path'] . "') }}\" style=\"margin-left: 10px;\"><i class=\"fa fa-angle-double-right\"></i> " . $menu['name'] . "</a></li>" . "\n" ;
+         }
+
+
+         $MENU_OPTIONS .= "" .
+         "    </ul>" . "\n" .
+         "</li>" . "\n\n";
+			
 			$BASE_INCLUDES .= "require_once __DIR__.'/" . $TABLENAME . "/index.php';" . "\n";
 
 			$count_externals = 0;
 			foreach($table_columns as $table_column){
 				$TABLECOLUMNS_ARRAY .= "\t\t" . "'". $table_column['name'] . "', \n";
 				if(!$table_column['primary'] || ($table_column['primary'] && !$table_column['auto'])){
-					$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
-					$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
+					switch ($table_column['type']){
+						case 'tinyint(1)':
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => (boolean) 0, \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => (boolean) \$row_sql['".$table_column['name']."'], \n";
+							break;
+						case 'date':
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(), \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => new \DateTime(\$row_sql['".$table_column['name']."']), \n";
+							break;
+						default:
+							$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
+							$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
+							break;
+					}
 
 					$INSERT_QUERY_FIELDS[] = "`" . $table_column['name'] . "`";
-					$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+					switch ($table_column['type']){
+						case 'tinyint(1)':
+							$INSERT_EXECUTE_FIELDS[] = "(boolean) \$data['" . $table_column['name'] . "']";
+							break;
+						case 'date':
+							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
+							break;
+						default:
+							$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+							break;
+					}
 					$UPDATE_QUERY_FIELDS[] = "`" . $table_column['name'] . "` = ?";
-					$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+					switch ($table_column['type']){
+                                                case 'date':
+							$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']->format('Y-m-d')";
+                                                        break;
+		                                default:
+							$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
+							break;
+					}
 
 					if(strpos($table_column['type'], 'text') !== false){
 						$EDIT_FORM_TEMPLATE .= "" . 
@@ -251,6 +349,14 @@ $console
 							$FIELDS_FOR_FORM .= "" . 
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'textarea', array('required' => " . $field_nullable . "));" . "\n";
 						}
+						elseif($table_column['type']=='tinyint(1)'){
+							$FIELDS_FOR_FORM .= "" .
+							"\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'checkbox', array('required' => false ));" . "\n";
+						}
+						elseif(strpos($table_column['type'], 'date') !== false){
+							$FIELDS_FOR_FORM .= "" .
+						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'date', array('required' => " . $field_nullable . ", 'input' => 'datetime', 'widget' => 'choice'));" . "\n";
+						}
 						else{
 							$FIELDS_FOR_FORM .= "" . 
 						    "\t" . "\$form = \$form->add('" . $table_column['name'] . "', 'text', array('required' => " . $field_nullable . "));" . "\n";
@@ -274,6 +380,12 @@ $console
 				$EXTERNALS_FOR_LIST .= "" . 
 	            "\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] = \$row_sql[\$table_columns[\$i]];" . "\n";
 			}
+
+					if($table['enabled']){
+						$ENABLED_ACTIONS='{% if row[\'enabled\'] == 0 %}<a href="{{ path(\''. $TABLENAME .'_enable\', { id: row[primary_key] }) }}" class="btn btn-primary btn-xs">Enable</a>{% else %}<a href="{{ path(\''. $TABLENAME .'_disable\', { id: row[primary_key] }) }}" class="btn btn-danger btn-xs">Disable</a>{% endif %}';
+					}else{
+						$ENABLED_ACTIONS='';
+					}
 
 
 			$INSERT_QUERY_VALUES = array();
@@ -307,16 +419,23 @@ $console
 
 			$_list_template = file_get_contents(__DIR__.'/../gen/list.html.twig');
 			$_list_template = str_replace("__TABLENAME__", $TABLENAME, $_list_template);
-			$_list_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_list_template);
+			$_list_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_list_template);
+			if(array_key_exists($TABLENAME,$app['config']['customActionsList'])){
+				$_custom_action_list=$app['config']['customActionsList'][$TABLENAME];
+			}else{
+				$_custom_action_list='';
+			}
+			$_list_template = str_replace("__CUSTOMACTIONLIST__", $_custom_action_list, $_list_template);
+			$_list_template = str_replace("__ENABLED_ACTIONS__", $ENABLED_ACTIONS, $_list_template);
 
 			$_create_template = file_get_contents(__DIR__.'/../gen/create.html.twig');
 			$_create_template = str_replace("__TABLENAME__", $TABLENAME, $_create_template);
-			$_create_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_create_template);
+			$_create_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_create_template);
 			$_create_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_create_template);
 
 			$_edit_template = file_get_contents(__DIR__.'/../gen/edit.html.twig');
 			$_edit_template = str_replace("__TABLENAME__", $TABLENAME, $_edit_template);
-			$_edit_template = str_replace("__TABLENAMEUP__", ucfirst(strtolower($TABLENAME)), $_edit_template);
+			$_edit_template = str_replace("__TABLENAMETITLE__", $TABLETITLE, $_edit_template);
 			$_edit_template = str_replace("__EDIT_FORM_TEMPLATE__", $EDIT_FORM_TEMPLATE, $_edit_template);
 
 			$_menu_template = file_get_contents(__DIR__.'/../gen/menu.html.twig');
