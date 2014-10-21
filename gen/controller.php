@@ -16,30 +16,78 @@ require_once __DIR__.'/../../../src/app.php';
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+$app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Request $request) use ($app) {  
+    $start = 0;
+    $qsStart = (int)($request->query->all()["start"]);
+    $search = ($request->query->all()["search"]);
+    $order = ($request->query->all()["order"]);
+    $columns = ($request->query->all()["columns"]);
+    $qsLength = (int)($request->query->all()["length"]);
+    
+    if($qsStart) {
+        $start = $qsStart;
+    }    
+	
+    $index = $start;   
+    $rowsPerPage = $qsLength;
+       
+    $rows = array();
+    
+    $searchValue = $search[value];
+    $orderValue = $order[0];
+    
+    $orderClause = "";
+    if($orderValue) {
+        $orderClause = " ORDER BY ". $columns[(int)$orderValue[column]][data] . " " . $orderValue[dir];
+    }
+    
+    $table_columns = array(
+__TABLECOLUMNS_ARRAY__
+    );
+    
+    $whereClause = "";
+    
+    $i = 0;
+    foreach($table_columns as $col){
+        
+        if ($i == 0) {
+           $whereClause = " WHERE";
+        }
+        
+        if ($i > 0) {
+            $whereClause =  $whereClause . " or"; 
+        }
+        
+        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
+        
+        $i = $i + 1;
+    }
+    
+    $recordsTotal = $app['db']->executeQuery("SELECT * FROM `__TABLENAME__`" . $whereClause . $orderClause)->rowCount();
+    
+    $find_sql = "SELECT * FROM `__TABLENAME__`". $whereClause . $orderClause . " LIMIT ". $index . "," . $rowsPerPage;
+    $rows_sql = $app['db']->fetchAll($find_sql, array());
+    
+    $queryData = new queryData();
+    $queryData->draw = $draw;
+    $queryData->recordsTotal = $recordsTotal;
+    $queryData->recordsFiltered = $recordsTotal;
+    $queryData->data = $rows_sql;
+    
+    return new Symfony\Component\HttpFoundation\Response(json_encode($queryData), 200);
+});
+
 $app->match('/__TABLENAME__', function () use ($app) {
     
 	$table_columns = array(
 __TABLECOLUMNS_ARRAY__
     );
 
-    $primary_key = "__TABLE_PRIMARYKEY__";
-	$rows = array();
-
-    $find_sql = "SELECT * FROM `__TABLENAME__`";
-    $rows_sql = $app['db']->fetchAll($find_sql, array());
-
-    foreach($rows_sql as $row_key => $row_sql){
-    	for($i = 0; $i < count($table_columns); $i++){
-
-__EXTERNALS_FOR_LIST__
-
-    	}
-    }
+    $primary_key = "__TABLE_PRIMARYKEY__";	
 
     return $app['twig']->render('__TABLENAME__/list.html.twig', array(
     	"table_columns" => $table_columns,
-        "primary_key" => $primary_key,
-    	"rows" => $rows
+        "primary_key" => $primary_key
     ));
         
 })

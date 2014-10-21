@@ -10,6 +10,16 @@
  * file that was distributed with this source code.
  */
 
+class queryData {
+    public $start;
+    public $recordsTotal;
+    public $recordsFiltered;
+    public $data;
+
+    function queryData() {
+    }
+}
+ 
 use Silex\Application;
 
 $app = new Application();
