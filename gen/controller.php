@@ -67,12 +67,20 @@ __TABLECOLUMNS_ARRAY__
     
     $find_sql = "SELECT * FROM `__TABLENAME__`". $whereClause . $orderClause . " LIMIT ". $index . "," . $rowsPerPage;
     $rows_sql = $app['db']->fetchAll($find_sql, array());
+
+    foreach($rows_sql as $row_key => $row_sql){
+        for($i = 0; $i < count($table_columns); $i++){
+
+__EXTERNALS_FOR_LIST__
+
+        }
+    }    
     
     $queryData = new queryData();
     $queryData->draw = $draw;
     $queryData->recordsTotal = $recordsTotal;
     $queryData->recordsFiltered = $recordsTotal;
-    $queryData->data = $rows_sql;
+    $queryData->data = $rows;
     
     return new Symfony\Component\HttpFoundation\Response(json_encode($queryData), 200);
 });
