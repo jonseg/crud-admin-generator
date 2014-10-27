@@ -18,11 +18,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 $app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Request $request) use ($app) {  
     $start = 0;
-    $qsStart = (int)($request->query->all()["start"]);
-    $search = ($request->query->all()["search"]);
-    $order = ($request->query->all()["order"]);
-    $columns = ($request->query->all()["columns"]);
-    $qsLength = (int)($request->query->all()["length"]);
+    $vars = $request->query->all();
+    $qsStart = (int)$vars["start"];
+    $search = $vars["search"];
+    $order = $vars["order"];
+    $columns = $vars["columns"];
+    $qsLength = (int)$vars["length"];    
     
     if($qsStart) {
         $start = $qsStart;
