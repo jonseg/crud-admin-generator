@@ -13,10 +13,17 @@
 
 require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/../../src/app.php';
-
+use Symfony\Component\HttpFoundation\Request;
 
 __BASE_INCLUDES__
 
+$app->get($app['login_path'], function(Request $request) use ($app) {
+
+    return $app['twig']->render('login.html.twig', array(
+        'error'         => $app['security.last_error']($request),
+        'last_username' => $app['session']->get('_security.last_username'),
+    ));
+});
 
 $app->match('/', function () use ($app) {
 

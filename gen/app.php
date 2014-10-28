@@ -10,16 +10,6 @@
  * file that was distributed with this source code.
  */
 
-class queryData {
-    public $start;
-    public $recordsTotal;
-    public $recordsFiltered;
-    public $data;
-
-    function queryData() {
-    }
-}
- 
 use Silex\Application;
 
 $app = new Application();
@@ -35,12 +25,12 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
         'dbs.options' => array(
             'db' => array(
-                'driver'   => 'pdo_mysql',
-                'dbname'   => 'DATABASE_NAME',
-                'host'     => '127.0.0.1',
-                'user'     => 'DATABASE_USER',
-                'password' => 'DATABASE_PASS',
-                'charset'  => 'utf8',
+                'driver'   => '__DATABASE_DRIVER__',
+                'dbname'   => '__DATABASE_NAME__',
+                'host'     => '__DATABASE_HOST__',
+                'user'     => '__DATABASE_USER__',
+                'password' => '__DATABASE_PASS__',
+                'charset'  => '__DATABASE_CHARSET__',
             ),
         )
 ));
@@ -57,7 +47,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'form' => array('login_path' => $app['login_path'], 'check_path' => $app['login_check']),
             'logout' => array('logout_path' => $app['logout_path']),
             'users' => array(
-                'admin' => array('ROLE_ADMIN', '5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg=='),
+                '__ADMIN_USERNAME__' => array('ROLE_ADMIN', '__ADMIN_PASSWORD__'),
             ),
         ),
     )
