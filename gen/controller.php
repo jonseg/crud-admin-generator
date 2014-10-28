@@ -34,12 +34,12 @@ $app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Re
        
     $rows = array();
     
-    $searchValue = $search[value];
+    $searchValue = $search['value'];
     $orderValue = $order[0];
     
     $orderClause = "";
     if($orderValue) {
-        $orderClause = " ORDER BY ". $columns[(int)$orderValue[column]][data] . " " . $orderValue[dir];
+        $orderClause = " ORDER BY ". $columns[(int)$orderValue['column']]['data'] . " " . $orderValue['dir'];
     }
     
     $table_columns = array(
@@ -56,7 +56,7 @@ __TABLECOLUMNS_ARRAY__
         }
         
         if ($i > 0) {
-            $whereClause =  $whereClause . " or"; 
+            $whereClause =  $whereClause . " OR"; 
         }
         
         $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
@@ -78,7 +78,7 @@ __EXTERNALS_FOR_LIST__
     }    
     
     $queryData = new queryData();
-    $queryData->draw = $draw;
+    $queryData->start = $start;
     $queryData->recordsTotal = $recordsTotal;
     $queryData->recordsFiltered = $recordsTotal;
     $queryData->data = $rows;
