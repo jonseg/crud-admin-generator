@@ -39,16 +39,16 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'dbs.options' => array(
             'db' => array(
                 'driver'   => 'pdo_mysql',
-                'dbname'   => 'DATABASE_NAME',
+                'dbname'   => 'entrepyr',
                 'host'     => '127.0.0.1',
-                'user'     => 'DATABASE_USER',
-                'password' => 'DATABASE_PASS',
+                'user'     => 'root',
+                'password' => '',
                 'charset'  => 'utf8',
             ),
         )
 ));
 
-$app['asset_path'] = '/resources';
+$app['asset_path'] = 'http://localhost/crud-admin-generator/web/resources';
 $app['debug'] = true;
 
 return $app;
