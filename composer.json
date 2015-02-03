@@ -1,0 +1,25 @@
+{
+    "name": "rogerioadris/crud-admin-generator",
+    "description": "An open source tool to generate a complete backend from a MySql database.",
+    "require": {
+        "php": ">=5.3.3",
+        "silex/silex": "1.2.*",
+        "monolog/monolog": "~1.4,>=1.4.1",
+        "doctrine/dbal": "~2.2",
+        "symfony/console": ">=2.3",
+        "twig/twig": ">=1.8.0,<2.0-dev",
+        "symfony/twig-bridge": ">=2.3,<2.6-dev",
+        "symfony/form": "~2.3",
+        "symfony/validator": "~2.3",
+        "symfony/config": "~2.3",
+        "symfony/translation": "~2.3",
+        "symfony/locale": "~2.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rogério Adriano",
+            "email": "rogerioadris@gmail.com"
+        }
+    ]
+}
