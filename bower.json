@@ -1,0 +1,18 @@
+{
+  "name": "generate-crud",
+  "version": "0.0.1",
+  "authors": [
+    "Rogério Adriano <rogerio.adris@luzpropria.com>"
+  ],
+  "description": "An open source tool to generate a complete backend from a MySql database.",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "bootstrap": "~3.3.2",
+    "font-awesome": "~4.3.0",
+    "ionicons": "~2.0.1",
+    "bootstrap-slider": "*",
+    "bootstrap-wysihtml5": "*",
+    "bootstrap-colorpicker": "*"
+  }
+}

@@ -3,23 +3,28 @@
     "description": "An open source tool to generate a complete backend from a MySql database.",
     "require": {
         "php": ">=5.3.3",
-        "silex/silex": "1.2.*",
+        "silex/silex": "~1.2",
         "monolog/monolog": "~1.4,>=1.4.1",
         "doctrine/dbal": "~2.2",
-        "symfony/console": ">=2.3",
         "twig/twig": ">=1.8.0,<2.0-dev",
+        "symfony/console": ">=2.3",
         "symfony/twig-bridge": ">=2.3,<2.6-dev",
         "symfony/form": "~2.3",
         "symfony/validator": "~2.3",
         "symfony/config": "~2.3",
         "symfony/translation": "~2.3",
-        "symfony/locale": "~2.3"
+        "symfony/locale": "~2.3",
+        "symfony/security": "~2.3",
+        "swiftmailer/swiftmailer": ">=4.1.2,<4.2-dev"
     },
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Rogério Adriano",
-            "email": "rogerioadris@gmail.com"
+    "authors": [{
+        "name": "Rogério Adriano",
+        "email": "rogerioadris.silva@gmail.com"
+    }],
+    "autoload": {
+        "psr-4": {
+            "Crud\\": "src/"
         }
-    ]
+    }
 }

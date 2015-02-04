@@ -1,0 +1,31 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+<div class="page-login">
+    <div class="container">
+        <form class="form-signin" action="/{{ app.security_path }}/login_check" method="post">
+            <p class="form-signin-heading text-muted" id="logo">
+                Generate CRUD
+            </p>
+
+            <input type="text" name="_username" class="form-control" placeholder="Email address or Username" required="required" value="{{ last_username }}" autofocus>
+            <input type="password" name="_password" class="form-control" placeholder="Password" required="required">
+            <button class="btn btn-lg btn-luz btn-block" type="submit">
+                Logar-se
+            </button>
+
+            {% if error is defined and error %}
+                <div class="alert-message alert-message-danger">
+                    <h4>Ops...</h4>
+                    {% if error == 'Bad credentials.' %}
+                        <p>Login ou senha inválido</p>
+                    {% else %}
+                        <p>{{ error }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+        </form>
+    </div>
+</div>
+{% endblock body %}
