@@ -1,0 +1,78 @@
+{{ '{% extends \'' }}{{ table }}{{ '/theme.twig\' %}' }}
+
+{{ '{% block content %}' }}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>List {{ table | camelize }}</h1>
+</section>
+<!-- END Content Header (Page header) -->
+
+<!-- Main content -->
+<section class="content">
+   <div class="row">
+      <div class="col-xs-12">
+         <div class="box">
+            <div class="box-header"></div>
+            <div class="box-body table-responsive">
+
+               <a class="btn btn-primary" href="{{ '{{' }} path('{{ table }}_create') {{ '}}' }}">New {{ table | camelize }}</a>
+
+               <hr>
+               <div class="container-fluid">
+               <table id="banks_list" class="table table-bordered table-striped">
+                  <thead>
+                     <tr>
+                        {{ '{% for table_column in table_columns %}<th>{{ table_column }}</th>' }}
+                        {{ '{% endfor %}<th>Ações</th>' }}
+                     </tr>
+                  </thead>
+                  <tfoot>
+                     <tr>
+                        {{ '{% for table_column in table_columns %}<th>{{ table_column }}</th>' }}
+                        {{ '{% endfor %}<th>Ações</th>' }}
+                     </tr>
+                  </tfoot>
+               </table>
+               </div>
+
+            </div>
+            <!-- /.box-body -->
+         </div>
+         <!-- /.box -->
+      </div>
+   </div>
+</section>
+<!-- END Main content -->
+{{ '{% endblock content %}' }}
+
+
+{{ '{% block script %}' }}
+{% autoescape %}
+   {{ '{{ parent() }}' }}
+   <script type="text/javascript">
+      var url = {
+         list: '{{ '{{' }} path("{{ table }}_list") {{ '}}' }}',
+         edit: '{{ '{{' }} path("{{ table }}_edit", {"id": "PLACEHOLDER"}) {{ '}}' }}',
+         del: '{{ '{{' }} path("{{ table }}_delete", {"id": "PLACEHOLDER"}) {{ '}}' }}'
+      };
+
+      $(function(){
+         $("#banks_list").dataTable({
+            serverSide: true,
+            ajax: url.list,
+            columns: [
+               {{ '{% for table_column, value in table_columns %}{ "data": "{{ table_column }}"}' }},
+               {{ '{% endfor %}{ "orderable": false, "data": null, "defaultContent": null }' }}
+            ],
+            rowCallback: function(row, data) {
+               var actions = [
+                  '<a href="' + url.edit.replace('PLACEHOLDER', data.{{ '{{primary_key}}' }}) + '" class="btn btn-primary btn-xs">Edit</a>',
+                  '<a href="' + url.del.replace('PLACEHOLDER', data.{{ '{{primary_key}}' }}) + '" class="btn btn-danger btn-xs">Delete</a>',
+               ];
+               $('td:last', row).html( actions.join("\t") );
+            }
+         });
+      });
+   </script>
+{% endautoescape %}
+{{ '{% endblock script %}' }}

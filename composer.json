@@ -12,6 +12,7 @@
         "symfony/form": "~2.3",
         "symfony/validator": "~2.3",
         "symfony/config": "~2.3",
+        "symfony/filesystem": "~2.3",
         "symfony/translation": "~2.3",
         "symfony/locale": "~2.3",
         "symfony/security": "~2.3",

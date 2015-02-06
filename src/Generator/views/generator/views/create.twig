@@ -1,0 +1,62 @@
+{{ '{% extends \'' }}{{ table }}{{ '/theme.twig\' %}' }}
+
+{{ '{% block content %}' }}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>Create {{ table | camelize }}</h1>
+</section>
+<!-- END Content Header (Page header) -->
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="row">
+        <div class="col-md-12">
+
+            {{ '{{ form_start(form) }}' }}
+                <div class="box box-info">
+                    <div class="box-body">
+
+{% for column in data.columns_form %}
+                        <div class='form-group'>
+                            {{ '{{' }} form_label(form.{{ column.name }}) {{ '}}' }}
+                            {{ '{{' }} form_errors(form.{{ column.name }}) {{ '}}' }}
+                            {{ '{{' }} form_widget(form.{{ column.name }}, { attr: { 'class': 'form-control{% if column.type in ['textarea'] %} editor {{ column.name }}{% endif %}' }}) {{ '}}' }}
+                        </div>
+
+{% endfor %}
+
+                        {{ '{{ form_rest(form) }}' }}
+                    </div><!-- /.box-body -->
+
+                    <div class="row-fluid">
+                        <div class="col-md-6">
+                            <a href="{{ '{{' }} path('{{ table }}') {{ '}}' }}" class="btn btn-default">Previous</a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </div>
+                    <div class="clear"><br></div>
+
+                </div><!-- /.box -->
+            {{ '{{ form_end(form) }}' }}
+        </div>
+    </div>
+
+</section>
+<!-- END Main content -->
+{{ '{% endblock content %}' }}
+
+{{ '{% block script %}' }}
+{% autoescape %}
+    {{ '{{ parent() }}' }}
+    <script type="text/javascript">
+        $(function() {
+{% for column in data.columns_form if column.type in ['textarea'] %}
+            $(".editor.{{ column.name }}").wysihtml5();
+{% endfor %}
+        });
+    </script>
+{% endautoescape %}
+{{ '{% endblock script %}' }}

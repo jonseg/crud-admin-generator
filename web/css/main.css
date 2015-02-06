@@ -155,3 +155,8 @@ input.validation:required:valid {
     overflow: scroll;
     min-height: 160px;
 }
+/* ***** DataTable ***** */
+
+table.dataTable tfoot th, table.dataTable tfoot td, table.dataTable thead th, table.dataTable thead td {
+    border-color: #DDD !important;
+}

@@ -1,0 +1,213 @@
+<?php
+/*
+ *  (c) Rogério Adriano da Silva <rogerioadris.silva@gmail.com>
+ */
+
+namespace Crud\Controller;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+/**
+ * Class {{ table | camelize }}Controller
+ */
+class {{ table | camelize }}Controller extends ContainerAware
+{
+    /**
+     * Get format json
+     */
+    public function listAction(Request $request)
+    {
+        $qsStart = (int) $request->query->get('start', 0);
+        $search = $request->query->get('search', '');
+        $order = $request->query->get('order', array(array('column' => 0, 'dir' => 'asc')));
+        $columns = $request->query->get('columns');
+        $qsLength = (int) $request->query->get('length', 10);
+
+        $index = $qsStart;
+        $rowsPerPage = $qsLength;
+
+        $rows = array();
+
+        $searchValue = $search['value'];
+        $orderValue = $order[0];
+
+        $orderClause = '';
+        if ($orderValue) {
+            $orderClause = sprintf('ORDER BY `%s` %s', $columns[(int) $orderValue['column']]['data'], strtoupper($orderValue['dir']));
+        }
+
+        $table_columns = array(
+            {% spaceless %}
+            {% for column in data.columns %}'{{ column.name }}',
+            {% endfor %}{% endspaceless %}
+
+        );
+
+        $whereClause = "";
+
+        $i = 0;
+        foreach ($table_columns as $col) {
+            if ($i == 0) {
+                $whereClause = 'WHERE (';
+            } elseif ($i > 0) {
+                $whereClause .=  ' OR ';
+            }
+
+            $whereClause .=  sprintf('`%s` LIKE \'%%%s%%\'', $col, $searchValue);
+
+            $i = $i + 1;
+        }
+        $whereClause .= ')';
+
+        $recordsTotal = $this->get('db')->executeQuery(sprintf('SELECT COUNT(1) as total FROM `{{table}}` %s %s LIMIT 1', $whereClause, $orderClause))->fetch()['total'];
+        $rows_sql = $this->get('db')->fetchAll(sprintf('SELECT * FROM `{{table}}` %s %s LIMIT %u, %u', $whereClause, $orderClause, $index, $rowsPerPage), array());
+
+        foreach ($rows_sql as $row_key => $row_sql) {
+            for ($i = 0; $i < count($table_columns); $i++) {
+                $rows[$row_key][$table_columns[$i]] = $row_sql[$table_columns[$i]];
+            }
+        }
+
+        return new JsonResponse(array(
+            'start' => $qsStart,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsTotal,
+            'data' => $rows,
+        ));
+    }
+
+    /**
+     * View
+     */
+    public function indexAction(Request $request)
+    {
+        $table_columns = array(
+            {% spaceless %}
+            {% for column in data.columns %}'{{ column.name }}' => '{{ column.title }}',
+            {% endfor %}{% endspaceless %}
+
+        );
+
+        $primary_key = '{{ data.primary_key }}';
+
+        return $this->render('list.twig', array(
+            'primary_key' => $primary_key,
+            'table_columns' => $table_columns,
+        ));
+    }
+
+    /**
+     * Form
+     */
+    private function createForm(array $data = array(), array $parameters = array())
+    {
+        $form = $this->get('form.factory')->createBuilder('form', $data, $parameters);
+
+        {% spaceless %}
+        {% for column in data.columns_form %}$form = $form->add('{{ column.name }}', '{{ column.type }}', array({% if column.nullable %}'required' => true, {% endif %}'label' => '{{ column.title }}'));
+        {% endfor %}{% endspaceless %}
+
+
+        return $form->getForm();
+    }
+
+    /**
+     * Create
+     */
+    public function createAction(Request $request)
+    {
+        $initial_data = array(
+            {% spaceless %}
+            {% for column in data.columns %}'{{ column.name }}' => {% spaceless %}{% if column.type in ['datetime', 'date'] %}
+            (new \DateTime())->format('Y-m-d H:i:s'){%else%}
+            null{% endif %}{% endspaceless %},
+            {% endfor %}{% endspaceless %}
+
+        );
+
+        $form = $this->createForm($initial_data, array(
+            'action' => $this->get('url_generator')->generate('{{ table }}_create'),
+            'method' => 'POST',
+        ));
+
+        if ("POST" == $request->getMethod()) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $update_query = "INSERT INTO `{{table}}` ({% for column in data.columns %}{% if not column.primary %}`{{ column.name }}`{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}) VALUES ({% for column in data.columns %}{% if not column.primary %}?{% if not loop.last %}, {% endif %}{% endif %}{% endfor %})";
+                $this->get('db')->executeUpdate($update_query, array({% for column in data.columns %}{% if not column.primary %}$data['{{ column.name }}']{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}));
+
+                $this->get('session')->getFlashBag()->add('success', array('message' => '{{ table }} created!'));
+
+                return $this->getContainer()->redirect($this->get('url_generator')->generate('{{ table }}'));
+            }
+        }
+
+        return $this->render('create.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * Edit
+     */
+    public function editAction(Request $request, $id)
+    {
+        $row_sql = $this->get('db')->fetchAssoc('SELECT * FROM `{{ table }}` WHERE `{{ data.primary_key }}` = ? LIMIT 1;', array($id));
+
+        if ($row_sql === false) {
+            $this->get('session')->getFlashBag()->add('danger', array('message' => 'Not found'));
+
+            return $this->getContainer()->redirect($this->get('url_generator')->generate('{{ table }}'));
+        }
+
+        $initial_data = array(
+            {% spaceless %}
+            {% for column in data.columns %}'{{ column.name }}' => {% spaceless %}{% if column.name in ['updated'] %}
+            (new \DateTime())->format('Y-m-d H:i:s'){%else%}
+            $row_sql['{{ column.name }}']{% endif %}{% endspaceless %},
+            {% endfor %}{% endspaceless %}
+
+        );
+
+        $form = $this->createForm($initial_data, array(
+            'action' => $this->get('url_generator')->generate('{{ table }}_edit', array('{{ data.primary_key }}' => $id)),
+            'method' => 'POST',
+        ));
+
+        if ("POST" == $request->getMethod()) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+                $update_query = "UPDATE `{{table}}` SET {% for column in data.columns %}{% if not column.primary %}`{{ column.name }}` = ?{% if not loop.last %}, {% endif %}{% endif %}{% endfor %} WHERE `{{ data.primary_key }}` = ? LIMIT 1";
+                $this->get('db')->executeUpdate($update_query, array({% for column in data.columns %}{% if not column.primary %}$data['{{ column.name }}'], {% endif %}{% endfor %} $data['{{ data.primary_key }}']));
+
+                $this->get('session')->getFlashBag()->add('success', array('message' => '{{ table }} updated!'));
+
+                return $this->getContainer()->redirect($this->get('url_generator')->generate('{{ table }}'));
+            }
+        }
+
+        return $this->render('edit.twig', array(
+            'form' => $form->createView(),
+            'id' => $id,
+        ));
+    }
+
+    public function deleteAction(Request $request, $id)
+    {
+        $row_sql = $this->get('db')->fetchAssoc('SELECT * FROM `{{ table }}` WHERE `{{ data.primary_key }}` = ? LIMIT 1;', array($id));
+
+        if ($row_sql === false) {
+            $this->get('session')->getFlashBag()->add('danger', array('message' => 'Not found'));
+        } else {
+            $this->get('db')->executeUpdate('DELETE FROM `{{ table }}` WHERE `{{ data.primary_key }}` = ?', array($id));
+            $this->get('session')->getFlashBag()->add('danger', array('message' => '{{ table }} deleted'));
+        }
+
+        return $this->getContainer()->redirect($this->get('url_generator')->generate('{{ table }}'));
+    }
+}

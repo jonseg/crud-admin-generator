@@ -1,3 +1,5 @@
 vendor/
 composer.lock
 web/lib
+node_modules
+src/Provider/DoctrineServiceProvider.php

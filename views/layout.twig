@@ -7,7 +7,9 @@
     <link href="{{ asset('lib/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('lib/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('lib/ionicons/css/ionicons.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('lib/bootstrap-wysihtml5/dist/bootstrap-wysihtml5-0.0.2.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('lib/bootstrap3-wysihtml5/dist/bootstrap-wysihtml5-0.0.2.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('lib/datatables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('lib/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/AdminLTE.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/main.css') }}" rel="stylesheet" type="text/css" />
 
@@ -42,13 +44,41 @@
                     <section class="sidebar">
                         <!-- sidebar menu: : style can be found in sidebar.less -->
                         <ul class="sidebar-menu">
-                            {% block menu %}{% endblock %}
+                            {% block menu %}{% include 'menu.twig' %}{% endblock %}
+                            <li class="user">
+                                <a href="/{{ app.security_path }}/logout">
+                                    <i class="fa fa-user"></i> <span>{{ app.security.token.user.username }} (logout)</span>
+                                </a>
+                            </li>
                         </ul>
                     </section><!-- /.sidebar -->
                 </aside>
 
                 <!-- Right side column. Contains the navbar and content of the page -->
                 <aside class="right-side">
+                    {% block message %}
+                        <br>
+                        {% set alertTypeAvaillable = [ 'info', 'success', 'warning', 'danger'] %}
+                        {% if app.session.flashbag is defined %}
+                            {% for alertType in alertTypeAvaillable %}
+                                {% for alert in app.session.flashBag.get(alertType) %}
+                                    <div class="alert alert-{{ alertType }} alert-dismissable">
+                                        {% if alertType == 'info' %}
+                                            <i class="fa fa-info"></i>
+                                        {% elseif alertType == 'success' %}
+                                            <i class="fa fa-check"></i>
+                                        {% elseif alertType == 'warning' %}
+                                            <i class="fa fa-exclamation"></i>
+                                        {% elseif alertType == 'danger' %}
+                                            <i class="fa fa-warning"></i>
+                                        {% endif %}
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                        <b>{{ alert.message }}</b>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endblock message %}
                     {% block content %}{% endblock %}
                 </aside><!-- /.right-side -->
             </div><!-- ./wrapper -->
@@ -57,6 +87,11 @@
 
     <script src="{{ asset('lib/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('lib/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('lib/wysihtml5/parser_rules/advanced.js') }}"></script>
+    <script src="{{ asset('lib/wysihtml5/dist/wysihtml5-0.3.0.min.js') }}"></script>
+    <script src="{{ asset('lib/bootstrap3-wysihtml5/dist/bootstrap-wysihtml5-0.0.2.js') }}"></script>
+    <script src="{{ asset('lib/datatables/media/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('lib/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.js') }}"></script>
     {% block script %}{% endblock script %}
 </body>
 </html>

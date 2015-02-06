@@ -11,14 +11,14 @@
             <input type="text" name="_username" class="form-control" placeholder="Email address or Username" required="required" value="{{ last_username }}" autofocus>
             <input type="password" name="_password" class="form-control" placeholder="Password" required="required">
             <button class="btn btn-lg btn-luz btn-block" type="submit">
-                Logar-se
+                Log in
             </button>
 
             {% if error is defined and error %}
                 <div class="alert-message alert-message-danger">
                     <h4>Ops...</h4>
                     {% if error == 'Bad credentials.' %}
-                        <p>Login ou senha inválido</p>
+                        <p>Invalid login or password</p>
                     {% else %}
                         <p>{{ error }}</p>
                     {% endif %}

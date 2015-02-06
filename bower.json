@@ -12,7 +12,9 @@
     "font-awesome": "~4.3.0",
     "ionicons": "~2.0.1",
     "bootstrap-slider": "*",
-    "bootstrap-wysihtml5": "*",
-    "bootstrap-colorpicker": "*"
+    "bootstrap-colorpicker": "*",
+    "datatables": "~1.10.4",
+    "datatables-bootstrap3-plugin": "~0.2.0",
+    "bootstrap3-wysihtml5": "*"
   }
 }

@@ -10,6 +10,6 @@
  * file that was distributed with this source code.
  */
 require_once __DIR__.'/vendor/autoload.php';
-$app = require __DIR__.'/src/app.php';
+$app = require __DIR__.'/src/bootstrap.php';
 $console = require __DIR__.'/src/console.php';
 $console->run();
