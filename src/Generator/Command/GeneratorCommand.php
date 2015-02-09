@@ -68,6 +68,10 @@ class GeneratorCommand extends AbstractCommand
                 }
             }, $table_result);
 
+            if(!($primary_keys === 1 || ($primary_keys > 1 && $primary_keys_auto === 1))){
+                continue;
+            }
+
             foreach ($table_result as $column) {
                 if ((($primary_keys > 1 && $primary_keys_auto == 1) and ($column['Extra'] == 'auto_increment')) or ($column['Key'] == "PRI")) {
                     $primary_key = $column['Field'];
