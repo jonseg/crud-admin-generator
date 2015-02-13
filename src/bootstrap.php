@@ -9,7 +9,7 @@ $app = new Application();
 
 // Settings
 $app['security_path'] = '/security';
-$app['asset_path'] = '/resources';
+$app['asset_path'] = '/';
 $app['debug'] = true;
 
 // http://silex.sensiolabs.org/doc/providers/session.html

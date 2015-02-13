@@ -16,9 +16,7 @@ use Silex\Provider\SwiftmailerServiceProvider as BaseSwiftmailerServiceProvider;
 class SwiftmailerServiceProvider extends BaseSwiftmailerServiceProvider
 {
     /**
-     * [register description]
-     * @param  Application $app [description]
-     * @return [type]      [description]
+     * @param Application $app
      */
     public function register(Application $app)
     {

@@ -1,0 +1,16 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+<section class="content" style="min-height: 100%">
+
+    <div class="error-page" style="margin-top: 100px;">
+        <h2 class="headline text-danger">{{ code }}</h2>
+        <div class="error-content" style="margin-top: 50px; ">
+            <h3 class="text-danger">Ops...</h3>
+            <p>{{ message }}</p>
+        </div>
+        <div class="clear"></div>
+        {# <p>{{ error }}</p> #}
+    </div><!-- /.error-page -->
+</section>
+{% endblock body %}

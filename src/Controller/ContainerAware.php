@@ -6,6 +6,7 @@
 namespace Crud\Controller;
 
 use Silex\Application;
+use Crud\Generator\Helper\CamelCaseHelper;
 
 /**
  * Class ContainerAware
@@ -51,7 +52,7 @@ abstract class ContainerAware
      */
     protected function render($name, array $parameters = array())
     {
-        $path = strtolower(str_replace(array(__NAMESPACE__, '\\', 'Controller'), array(), get_class($this)));
+        $path = CamelCaseHelper::decode(str_replace(array(__NAMESPACE__, '\\', 'Controller'), array(), get_class($this)));
         if ('sis' === substr($path, 0, 3)) {
             $path = 'sis/'.substr($path, 3);
         }

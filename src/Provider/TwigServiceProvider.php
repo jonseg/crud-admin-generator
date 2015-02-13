@@ -15,6 +15,9 @@ use Silex\Provider\TwigServiceProvider as BaseTwigServiceProvider;
  */
 class TwigServiceProvider extends BaseTwigServiceProvider
 {
+    /**
+     * @param Application $app
+     */
     public function register(Application $app)
     {
         parent::register($app);

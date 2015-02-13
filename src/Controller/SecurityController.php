@@ -7,8 +7,14 @@ namespace Crud\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class SecurityController
+ */
 class SecurityController extends ContainerAware
 {
+    /**
+     * Login Page
+     */
     public function loginAction(Request $request)
     {
         return $this->render('login.twig', array(
@@ -16,10 +22,5 @@ class SecurityController extends ContainerAware
                 'last_username' => $this->get('session')->get('_security.last_username'),
             )
         );
-    }
-
-    public function userAction()
-    {
-        return 'Logado';
     }
 }

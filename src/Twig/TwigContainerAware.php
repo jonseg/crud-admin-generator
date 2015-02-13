@@ -7,6 +7,11 @@ namespace Crud\Twig;
 
 use Silex\Application;
 
+/**
+ * Class TwigContainerAware
+ *
+ * http://twig.sensiolabs.org/doc/advanced.html#creating-an-extension
+ */
 abstract class TwigContainerAware extends \Twig_Extension
 {
     /**

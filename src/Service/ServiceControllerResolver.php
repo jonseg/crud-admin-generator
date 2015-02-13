@@ -8,6 +8,11 @@ namespace Crud\Service;
 use Crud\Controller\ContainerAware;
 use Silex\ControllerResolver;
 
+/**
+ * Class ServiceControllerResolver
+ *
+ * http://silex.sensiolabs.org/doc/providers.html#controller-providers
+ */
 class ServiceControllerResolver extends ControllerResolver
 {
     /**

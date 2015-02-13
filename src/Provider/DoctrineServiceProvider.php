@@ -16,26 +16,18 @@ use Silex\Provider\DoctrineServiceProvider as BaseDoctrineServiceProvider;
 class DoctrineServiceProvider extends BaseDoctrineServiceProvider
 {
     /**
-     * [register description]
-     * @param  Application $app [description]
-     * @return [type]      [description]
+     * @param Application $app
      */
     public function register(Application $app)
     {
         $app['dbs.options'] = array(
             'db' => array(
                 'driver'   => 'pdo_mysql',
-                'dbname'   => 'bevicred',
+                'dbname'   => 'DATABASE_NAME',
                 'host'     => '127.0.0.1',
-                'user'     => 'root',
-                'password' => 'r0g3r10',
+                'user'     => 'DATABASE_USER',
+                'password' => 'DATABASE_PASS',
                 'charset'  => 'utf8',
-                // 'driver'   => 'pdo_mysql',
-                // 'dbname'   => 'DATABASE_NAME',
-                // 'host'     => '127.0.0.1',
-                // 'user'     => 'DATABASE_USER',
-                // 'password' => 'DATABASE_PASS',
-                // 'charset'  => 'utf8',
             ),
         );
 

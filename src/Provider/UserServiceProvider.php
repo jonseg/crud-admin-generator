@@ -31,9 +31,9 @@ class UserServiceProvider implements UserProviderInterface
     }
 
     /**
-     * [loadUserByUsername description]
-     * @param  [type] $username [description]
-     * @return [type] [description]
+     * @param string $username
+     *
+     * @return User
      */
     public function loadUserByUsername($username)
     {
@@ -47,9 +47,9 @@ class UserServiceProvider implements UserProviderInterface
     }
 
     /**
-     * [refreshUser description]
-     * @param  UserInterface $user [description]
-     * @return [type]        [description]
+     * @param UserInterface $user
+     *
+     * @return string
      */
     public function refreshUser(UserInterface $user)
     {
@@ -61,9 +61,8 @@ class UserServiceProvider implements UserProviderInterface
     }
 
     /**
-     * [supportsClass description]
-     * @param  [type] $class [description]
-     * @return [type] [description]
+     * @param  string  $class
+     * @return boolean
      */
     public function supportsClass($class)
     {

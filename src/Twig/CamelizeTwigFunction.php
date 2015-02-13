@@ -5,6 +5,11 @@
 
 namespace Crud\Twig;
 
+/**
+ * Class CamelizeTwigFunction
+ *
+ * http://twig.sensiolabs.org/doc/advanced.html#creating-an-extension
+ */
 class CamelizeTwigFunction extends TwigContainerAware
 {
     public function getName()

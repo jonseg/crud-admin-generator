@@ -9,6 +9,11 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class ExceptionServiceProvider
+ *
+ * http://silex.sensiolabs.org/doc/usage.html#error-handlers
+ */
 class ExceptionServiceProvider implements ServiceProviderInterface
 {
     /**
@@ -23,16 +28,23 @@ class ExceptionServiceProvider implements ServiceProviderInterface
     {
         $app->error(
             function (\Exception $e, $code) use ($app) {
-                unset($e);
                 if ($app['debug']) {
                     return; // exibir erro no ambiente desenvolvimento.
                 }
                 switch ($code) {
                     case 404:
-                        $message = 'A página solicitada não pôde ser encontrado.';
+                        $message = $app['twig']->render('security/error.twig', array(
+                            'code' => 404,
+                            'message' => 'Page not found, we could not find the page you were looking for.',
+                            'error' => $e->getMessage(),
+                        ));
                         break;
                     default:
-                        $message = 'Lamentamos, mas algo deu terrivelmente errado.';
+                        $message = $app['twig']->render('security/error.twig', array(
+                            'code' => 500,
+                            'message' => 'Something went wrong, we will work on fixing that right away.',
+                            'error' => $e->getMessage(),
+                        ));
                 }
 
                 return new Response($message, $code);

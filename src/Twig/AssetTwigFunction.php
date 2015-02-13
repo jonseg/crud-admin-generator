@@ -5,6 +5,11 @@
 
 namespace Crud\Twig;
 
+/**
+ * Class AssetTwigFunction
+ *
+ * http://twig.sensiolabs.org/doc/advanced.html#creating-an-extension
+ */
 class AssetTwigFunction extends TwigContainerAware
 {
     public function getName()

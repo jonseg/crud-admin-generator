@@ -10,9 +10,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Filesystem;
+use Crud\Generator\Helper\CamelCaseHelper;
 
+/**
+ * Class GeneratorCommand
+ */
 class GeneratorCommand extends AbstractCommand
 {
+    /**
+     * configure
+     */
     protected function configure()
     {
         $this
@@ -21,6 +28,12 @@ class GeneratorCommand extends AbstractCommand
             ->addOption('tables', null, InputOption::VALUE_REQUIRED, 'define tables generator');
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $getTables = array_map(function ($value) { return array_values($value)[0]; }, $this->get('db')->fetchAll('SHOW TABLES', array()));
@@ -68,7 +81,7 @@ class GeneratorCommand extends AbstractCommand
                 }
             }, $table_result);
 
-            if(!($primary_keys === 1 || ($primary_keys > 1 && $primary_keys_auto === 1))){
+            if (!($primary_keys === 1 || ($primary_keys > 1 && $primary_keys_auto === 1))) {
                 continue;
             }
 
@@ -137,10 +150,18 @@ class GeneratorCommand extends AbstractCommand
         $fs = new Filesystem();
         $dir_controller = realpath(__DIR__.'/../../Controller');
 
-        $controller = $this->get('twig')->render('generator/controller.twig', array('table' => $table, 'data' => $data));
-        $fs->dumpFile(sprintf('%s/%sController.php', $dir_controller, ucfirst($table)), $controller);
+        $table_camel = CamelCaseHelper::encode($table, true);
+
+        $controller = $this->get('twig')->render('generator/controller.twig', array('table' => $table, 'data' => $data, 'table_camel' => $table_camel));
+        $fs->dumpFile(sprintf('%s/%sController.php', $dir_controller, $table_camel), $controller);
     }
 
+    /**
+     * @param string $table
+     * @param array  $data
+     *
+     * @return
+     */
     private function createViews($table, array $data)
     {
         $fs = new Filesystem();
@@ -164,13 +185,18 @@ class GeneratorCommand extends AbstractCommand
         $fs->dumpFile(sprintf('%s/edit.twig', $dir_view), $list_view);
     }
 
+    /**
+     * @param string $table
+     *
+     * @return
+     */
     public function createRoutes($table)
     {
         $fs = new Filesystem();
         $file_routes = __DIR__.'/../../routes.php';
 
         if ($fs->exists($file_routes)) {
-            $file_contents = array_map(function($line){ return preg_replace('/\n/', '', $line); }, file($file_routes));
+            $file_contents = array_map(function ($line) { return preg_replace('/\n/', '', $line); }, file($file_routes));
 
             $table_routes = array();
             $exists = array(
@@ -181,13 +207,13 @@ class GeneratorCommand extends AbstractCommand
                 'delete' => false,
             );
 
+            $table_lower = strtolower($table);
+            $table_camel = CamelCaseHelper::encode($table, true);
+
             foreach (array_keys($exists) as $route) {
-                $lines_found = array_keys(preg_grep(sprintf('/\'%s::%s\'/i', $table, $route), $file_contents));
+                $lines_found = array_keys(preg_grep(sprintf('/\'%s::%s\'/i', $table_camel, $route), $file_contents));
                 $exists[$route] = count($lines_found) === 1;
             }
-
-            $table_lower = strtolower($table);
-            $table_camel = ucfirst($table);
 
             if ($exists['index'] === false) {
                 $table_routes[] = "\$route->get(sprintf('/%s/{$table_lower}', \$app['security_path']), '{$table_camel}::index')->bind('{$table_lower}');";
@@ -210,12 +236,11 @@ class GeneratorCommand extends AbstractCommand
             // Rewriting
             $rewriting = array();
             $line_blank = 0;
-            foreach($file_contents as $line => $value) {
-
+            foreach ($file_contents as $line => $value) {
                 // Add routes
-                if(count($table_routes) > 0 && $last_line == $line) {
-                    $rewriting[] = '// ' . $table_camel;
-                    foreach($table_routes as $route_value) {
+                if (count($table_routes) > 0 && $last_line == $line) {
+                    $rewriting[] = '// '.$table_camel;
+                    foreach ($table_routes as $route_value) {
                         $rewriting[] = $route_value;
                     }
                     $rewriting[] = '';
@@ -234,21 +259,26 @@ class GeneratorCommand extends AbstractCommand
         }
     }
 
+    /**
+     * @param string $table
+     *
+     * @return
+     */
     public function createMenu($table)
     {
         $fs = new Filesystem();
         $file_menus = __DIR__.'/../../../views/menu.twig';
 
         if ($fs->exists($file_menus)) {
-            $file_contents = array_map(function($line){ return preg_replace('/\n/', '', $line); }, file($file_menus));
+            $file_contents = array_map(function ($line) { return preg_replace('/\n/', '', $line); }, file($file_menus));
 
             $table_lower = strtolower($table);
-            $table_camel = ucfirst($table);
+            $table_upper = ucfirst($table);
 
             if (!preg_grep(sprintf('/\{\{([ ]*)path\(([ ]*)\'%s\'([ ]*)\)/', strtolower($table_lower)), $file_contents)) {
-                $file_contents[] = '<li {% if menu_selected is defined and menu_selected == \'' . $table_lower . '\' %}class="active"{% endif %}>';
+                $file_contents[] = '<li {% if menu_selected is defined and menu_selected == \''.$table_lower.'\' %}class="active"{% endif %}>';
                 $file_contents[] = "\t<a href=\"{{ path('{$table_lower}') }}\">";
-                $file_contents[] = "\t\t<i class=\"fa fa-bars\"></i> <span>{$table_camel}</span>";
+                $file_contents[] = "\t\t<i class=\"fa fa-bars\"></i> <span>{$table_upper}</span>";
                 $file_contents[] = "\t</a>";
                 $file_contents[] = '</li>';
             }

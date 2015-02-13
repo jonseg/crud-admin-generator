@@ -16,9 +16,7 @@ use Silex\Provider\SecurityServiceProvider as BaseSecurityServiceProvider;
 class SecurityServiceProvider extends BaseSecurityServiceProvider
 {
     /**
-     * [register description]
-     * @param  Application $app [description]
-     * @return [type]      [description]
+     * @param Application $app
      */
     public function register(Application $app)
     {
