@@ -59,7 +59,7 @@ __TABLECOLUMNS_ARRAY__
             $whereClause =  $whereClause . " OR"; 
         }
         
-        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
+        $whereClause =  $whereClause . " " . $col . " LIKE BINARY '%". $searchValue ."%'";
         
         $i = $i + 1;
     }
