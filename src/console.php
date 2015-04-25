@@ -199,12 +199,19 @@ $console
 
 					$external_primary_key = $external_table['primary_key'];
 					$external_select_field = false;
+					$def_search_names_foreigner_key = array('name','title','e?mail','username');
+
+					if(!empty($app['usr_search_names_foreigner_key'])){
+						$search_names_foreigner_key = array_merge(
+							$app['usr_search_names_foreigner_key'],
+							$def_search_names_foreigner_key);
+					}
+
+						// pattern to match a name column, with or whitout a 3 to 4 Char prefix
+					$search_names_foreigner_key = '#^(.{3,4}_)?('.implode('|',$search_names_foreigner_key).')$#i';
 
 					foreach($external_table['columns'] as $external_column){
-						if($external_column['name'] == "name" ||
-							$external_column['name'] == "title" ||
-							$external_column['name'] == "email" ||
-							$external_column['name'] == "username"){
+						if( preg_match($search_names_foreigner_key, $external_column['name'])){
 							$external_select_field = $external_column['name'];
 						}
 					}
