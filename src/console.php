@@ -199,12 +199,12 @@ $console
 
 					$external_primary_key = $external_table['primary_key'];
 					$external_select_field = false;
-					$def_search_names_foreigner_key = array('name','title','e?mail','username');
+					$search_names_foreigner_key = array('name','title','e?mail','username');
 
 					if(!empty($app['usr_search_names_foreigner_key'])){
 						$search_names_foreigner_key = array_merge(
 							$app['usr_search_names_foreigner_key'],
-							$def_search_names_foreigner_key);
+							$search_names_foreigner_key);
 					}
 
 						// pattern to match a name column, with or whitout a 3 to 4 Char prefix
