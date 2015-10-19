@@ -35,17 +35,16 @@ $app->register(new Silex\Provider\ValidatorServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-
-        'dbs.options' => array(
-            'db' => array(
-                'driver'   => 'pdo_mysql',
-                'dbname'   => 'entrepyr',
-                'host'     => '127.0.0.1',
-                'user'     => 'root',
-                'password' => '',
-                'charset'  => 'utf8',
-            ),
-        )
+		'dbs.options' => array(
+			'db' => array(
+				'driver'   => 'pdo_mysql',
+				'dbname'   => 'DATABASE_NAME',
+				'host'     => '127.0.0.1',
+				'user'     => 'DATABASE_USER',
+				'password' => 'DATABASE_PASS',
+				'charset'  => 'utf8',
+			),
+		)
 ));
 
 $app['asset_path'] = 'http://localhost/crud-admin-generator/web/resources';
