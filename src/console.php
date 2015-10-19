@@ -135,6 +135,7 @@ $console
 			$TABLE_PRIMARYKEY = $table['primary_key'];
 
 			$TABLECOLUMNS_ARRAY = "";
+			$TABLECOLUMNS_TYPE_ARRAY = "";			
 			$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY = "";
 			$TABLECOLUMNS_INITIALDATA_ARRAY = "";
 
@@ -167,6 +168,7 @@ $console
 			$count_externals = 0;
 			foreach($table_columns as $table_column){
 				$TABLECOLUMNS_ARRAY .= "\t\t" . "'". $table_column['name'] . "', \n";
+				$TABLECOLUMNS_TYPE_ARRAY .= "\t\t" . "'". $table_column['type'] . "', \n";				
 				if(!$table_column['primary'] || ($table_column['primary'] && !$table_column['auto'])){
 					$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
 					$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
@@ -278,8 +280,25 @@ $console
 			}
 
 			if($EXTERNALS_FOR_LIST == ""){
-				$EXTERNALS_FOR_LIST .= "" .
-				"\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] = \$row_sql[\$table_columns[\$i]];" . "\n";
+				$EXTERNALS_FOR_LIST .= "" . 
+				"\t\t" . "if( \$table_columns_type[\$i] != \"blob\") {" . "\n" .
+				"\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] = \$row_sql[\$table_columns[\$i]];" . "\n" . 
+				"\t\t" . "} else {" .
+				
+				"\t\t\t\t" . "if( !\$row_sql[\$table_columns[\$i]] ) {" . "\n" .
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] = \"0 Kb.\";" . "\n" .
+				"\t\t\t\t" . "} else {" . "\n" .
+				   
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] = \" <a target='__blank' href='menu/download?id=\" . \$row_sql[\$table_columns[0]];" . "\n" .
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] .= \"&fldname=\" . \$table_columns[\$i];" . "\n" . 
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] .= \"&idfld=\" . \$table_columns[0];" . "\n" .
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] .= \"'>\";" . "\n" .
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] .= number_format(strlen(\$row_sql[\$table_columns[\$i]]) / 1024, 2) . \" Kb.\";" . "\n" .
+				"\t\t\t\t\t\t" . "\$rows[\$row_key][\$table_columns[\$i]] .= \"</a>\";" . "\n" .
+				    
+				"\t\t\t\t" . "}" . "\n" .
+				
+				"\t\t" . "}";
 			}
 
 
@@ -298,6 +317,7 @@ $console
 			$_controller = str_replace("__TABLENAME__", $TABLENAME, $_controller);
 			$_controller = str_replace("__TABLE_PRIMARYKEY__", $TABLE_PRIMARYKEY, $_controller);
 			$_controller = str_replace("__TABLECOLUMNS_ARRAY__", $TABLECOLUMNS_ARRAY, $_controller);
+			$_controller = str_replace("__TABLECOLUMNS_TYPE_ARRAY__", $TABLECOLUMNS_TYPE_ARRAY, $_controller);			
 			$_controller = str_replace("__TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY__", $TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY, $_controller);
 			$_controller = str_replace("__TABLECOLUMNS_INITIALDATA_ARRAY__", $TABLECOLUMNS_INITIALDATA_ARRAY, $_controller);
 			$_controller = str_replace("__EXTERNALS_FOR_LIST__", $EXTERNALS_FOR_LIST, $_controller);
