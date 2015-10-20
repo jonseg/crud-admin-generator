@@ -46,6 +46,10 @@ $app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Re
 __TABLECOLUMNS_ARRAY__
     );
     
+    $table_columns_type = array(
+__TABLECOLUMNS_TYPE_ARRAY__
+    );    
+    
     $whereClause = "";
     
     $i = 0;
@@ -85,6 +89,47 @@ __EXTERNALS_FOR_LIST__
     
     return new Symfony\Component\HttpFoundation\Response(json_encode($queryData), 200);
 });
+
+
+
+
+/* Download blob img */
+$app->match('/__TABLENAME__/download', function (Symfony\Component\HttpFoundation\Request $request) use ($app) { 
+    
+    // menu
+    $rowid = $request->get('id');
+    $idfldname = $request->get('idfld');
+    $fieldname = $request->get('fldname');
+    
+    if( !$rowid || !$fieldname ) die("Invalid data");
+    
+    $find_sql = "SELECT " . $fieldname . " FROM " . __TABLENAME__ . " WHERE ".$idfldname." = ?";
+    $row_sql = $app['db']->fetchAssoc($find_sql, array($rowid));
+
+    if(!$row_sql){
+        $app['session']->getFlashBag()->add(
+            'danger',
+            array(
+                'message' => 'Row not found!',
+            )
+        );        
+        return $app->redirect($app['url_generator']->generate('menu_list'));
+    }
+
+    header('Content-Description: File Transfer');
+    header('Content-Type: image/jpeg');
+    header("Content-length: ".strlen( $row_sql[$fieldname] ));
+    header('Expires: 0');
+    header('Cache-Control: public');
+    header('Pragma: public');
+    ob_clean();    
+    echo $row_sql[$fieldname];
+    exit();
+   
+    
+});
+
+
 
 $app->match('/__TABLENAME__', function () use ($app) {
     
