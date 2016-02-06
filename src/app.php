@@ -49,6 +49,13 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 ));
 
 $app['asset_path'] = '/resources';
+
+// determine image path for image fields in database
+// I.E field value would be image.jpg, result would be <img src="http://somepath/dist/images/image.jpg" />
+$app['image_fields'] = array(
+    //'table_name.field_name' => 'http://somepath/dist/images/',
+);
+
 $app['debug'] = true;
 	// array of REGEX column name to display for foreigner key insted of ID
 	// default used :'name','title','e?mail','username'
