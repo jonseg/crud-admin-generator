@@ -23,6 +23,10 @@
 				rowCallback: function( row, data ) {
 					var actions = '<a href="__TABLENAME__/edit/' + data.{{primary_key}} + '" class="btn btn-primary btn-xs">Edit</a> <a href="__TABLENAME__/delete/' + data.{{primary_key}} + '" onclick="return confirm_delete();" class="btn btn-danger btn-xs">Delete</a>';
 					$('td:eq({{ table_columns|length }})', row).html( actions );
+
+                    {% for image_tag_info in image_tag_insertion %}
+                    $('td:eq({{ image_tag_info.column_idx }})', row).append('<br /><img width="80" src="{{ image_tag_info.image_path }}' + data.{{ image_tag_info.column_name }} + '" />');
+                    {% endfor %}
 				}
 			});
         });
