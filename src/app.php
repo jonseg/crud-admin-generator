@@ -61,12 +61,12 @@ $app['image_fields'] = array(
 // If the automapping of foreign key for drop down list does not the job, you can
 // force a mapping here
 $app['foreign_key_mapping'] = array(
-    //'column_mapping.import_configs_id' => 'import_configs.default_site_name'
+    //'main_table_name.main_table_field' => 'foreign_table_name.foreign_table_field'
 );
 
 // Allow user to add additional menu links
 $app['menu_links'] = array(
-    //['name' => 'Admin Cron', 'url' => 'http://admin.adult-cron-service/', 'fa-icon' => ''],
+    //['name' => 'MENU NAME', 'url' => 'http://menu-url.com', 'fa-icon' => ''],
 );
 
 $app['debug'] = true;
