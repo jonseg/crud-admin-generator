@@ -64,6 +64,11 @@ $app['foreign_key_mapping'] = array(
     //'column_mapping.import_configs_id' => 'import_configs.default_site_name'
 );
 
+// Allow user to add additional menu links
+$app['menu_links'] = array(
+    //['name' => 'Admin Cron', 'url' => 'http://admin.adult-cron-service/', 'fa-icon' => ''],
+);
+
 $app['debug'] = true;
 	// array of REGEX column name to display for foreigner key insted of ID
 	// default used :'name','title','e?mail','username'
