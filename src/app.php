@@ -50,6 +50,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 $app['asset_path'] = '/resources';
 
+$app['application_name'] = 'Admin Generator';
+
 // determine image path for image fields in database
 // I.E field value would be image.jpg, result would be <img src="http://somepath/dist/images/image.jpg" />
 $app['image_fields'] = array(
