@@ -30,6 +30,10 @@ Install vendors:
 
     php composer.phar install
 
+Prepare your environment configs:
+
+    cp -f config.php.dist config.php
+
 You need point the document root of your virtual host to /path_to/admingenerator/web
 
 This is an example of VirtualHost:
