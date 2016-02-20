@@ -250,6 +250,12 @@ $(window).load(function(){
             }
             //Slide open or close the menu on link click
             btn.click(function(e) {
+
+                if($(btn).hasClass('additional')) {
+                  window.location.href = $(btn).attr('href');
+                  return true;
+                }
+
                 e.preventDefault();
                 if (isActive) {
                     //Slide up to close menu

@@ -136,7 +136,7 @@ $console
 
             $MENU_OPTIONS .= "" .
                 "<li class=\"treeview\">" . "\n" .
-                "    <a href=\"".$menu['url']."\">" . "\n" .
+                "    <a class=\"additional\" href=\"".$menu['url']."\">" . "\n" .
                 "        <i class=\"fa  ".$faIcon." \"></i>" . "\n" .
                 "        <span>" . $menu['name'] . "</span>" . "\n" .
                 "        <i class=\"fa pull-right \"></i>" . "\n" .
