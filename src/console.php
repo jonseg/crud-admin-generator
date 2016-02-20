@@ -209,14 +209,27 @@ $console
 							$search_names_foreigner_key);
 					}
 
-						// pattern to match a name column, with or whitout a 3 to 4 Char prefix
+					// pattern to match a name column, with or whitout a 3 to 4 Char prefix
 					$search_names_foreigner_key = '#^(.{3,4}_)?('.implode('|',$search_names_foreigner_key).')$#i';
 
+                    // find foreign key mapping for the drop down list
 					foreach($external_table['columns'] as $external_column){
 						if( preg_match($search_names_foreigner_key, $external_column['name'])){
 							$external_select_field = $external_column['name'];
 						}
 					}
+
+                    // if there is a custom mapping provided, use it instead
+                    if(isset($app['foreign_key_mapping'])) {
+                        $currentTableColumnKey = $TABLENAME . '.' . $table_column['name'];
+                        if(array_key_exists($currentTableColumnKey, $app['foreign_key_mapping'])) {
+                            $valueOfMapping = $app['foreign_key_mapping'][$currentTableColumnKey];
+                            if(substr($valueOfMapping, 0, strlen($table_column['external'])) == $table_column['external']) {
+                                $tableNameToTrim = $table_column['external'] . '.';
+                                $external_select_field = str_replace($tableNameToTrim, '', $valueOfMapping);
+                            }
+                        }
+                    }
 
 					if(!$external_select_field){
 						$external_select_field = $external_primary_key;

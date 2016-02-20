@@ -56,6 +56,12 @@ $app['image_fields'] = array(
     //'table_name.field_name' => 'http://somepath/dist/images/',
 );
 
+// If the automapping of foreign key for drop down list does not the job, you can
+// force a mapping here
+$app['foreign_key_mapping'] = array(
+    //'column_mapping.import_configs_id' => 'import_configs.default_site_name'
+);
+
 $app['debug'] = true;
 	// array of REGEX column name to display for foreigner key insted of ID
 	// default used :'name','title','e?mail','username'
