@@ -61,7 +61,7 @@ You can customize the url using the .htaccess file, maybe this will help you:
 Generate CRUD backend
 ---------------------
 
-Edit the file /path_to/admingenerator/src/app.php and set your database conection data:
+Edit the file config.php and set your database connection data:
 
     $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'dbs.options' => array(
@@ -87,6 +87,25 @@ For the url of your project, for example:
 
     $app['asset_path'] = 'http://domain.com/crudadmin/resources';
 
+There is also more optional customization you can do
+
+    // determine image path for image fields in database
+    // I.E field value would be image.jpg, result would be <img src="http://somepath/dist/images/image.jpg" />
+    $app['image_fields'] = array(
+        //'table_name.field_name' => 'http://somepath/dist/images/',
+    );
+
+    // If the automapping of foreign key for drop down list does not the job, you can
+    // force a mapping here
+    $app['foreign_key_mapping'] = array(
+        //'main_table_name.main_table_field' => 'foreign_table_name.foreign_table_field'
+    );
+
+    // Allow user to add additional menu links
+    $app['menu_links'] = array(
+        //['name' => 'MENU NAME', 'url' => 'http://menu-url.com', 'fa-icon' => ''],
+    );
+
 
 Now, execute the command that will generate the CRUD backend:
 
@@ -102,6 +121,8 @@ Customize the result
 --------------------
 
 The generated code is fully configurable and editable, you just have to edit the corresponding files.
+However, this approach is not recommended. Doing so will prevent you from re-generating the admin, which might
+be necessary in case you are doing changes to the database structure.
 
  - The **controller** you can find it in **/web/controllers/TABLE_NAME/index.php**
  - The **views** are in **/web/views/TABLE_NAME**
@@ -128,6 +149,10 @@ Author
 * Personal site: [http://jonsegador.com/](http://jonsegador.com/)
 * Twitter: *[@jonseg](https://twitter.com/jonseg)*
 * CRUD Admin Generator webpage: [http://crud-admin-generator.com](http://crud-admin-generator.com)
+
+Contributors
+------------
+* Jean-Michael Cyr
 
 
   [1]: http://crud-admin-generator.com
