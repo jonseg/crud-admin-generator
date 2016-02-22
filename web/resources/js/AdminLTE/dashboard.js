@@ -33,7 +33,10 @@ $(function() {
         "html": true, //Button which allows you to edit the generated HTML. Default false
         "link": true, //Button to insert a link. Default true
         "image": true, //Button to insert an image. Default true,
-        "color": true //Button to change color of font
+        "color": true, //Button to change color of font
+        parser: function(html) {
+          return html;
+        }
       }
     );
 
