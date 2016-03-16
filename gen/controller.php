@@ -140,6 +140,7 @@ __TABLECOLUMNS_ARRAY__
     $primary_key = "__TABLE_PRIMARYKEY__";
 
     $image_tag_insertion = array();
+    $call_to_action = array();
 
     foreach($table_columns as $idx => $table_column) {
         if(isset($app['image_fields']['__TABLENAME__' . '.' . $table_column])) {
@@ -149,12 +150,16 @@ __TABLECOLUMNS_ARRAY__
                 'column_name' => $table_column
             );
         }
+        if(isset($app['call_to_action']['__TABLENAME__' ])) {
+            $call_to_action = $app['call_to_action']['__TABLENAME__' ];
+        }
     }
 
     return $app['twig']->render('__TABLENAME__/list.html.twig', array(
     	"table_columns" => $table_columns,
         "primary_key" => $primary_key,
-        "image_tag_insertion" => $image_tag_insertion
+        "image_tag_insertion" => $image_tag_insertion,
+        "call_to_action" => $call_to_action
     ));
         
 })

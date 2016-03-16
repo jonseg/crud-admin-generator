@@ -106,6 +106,29 @@ There is also more optional customization you can do
         //['name' => 'MENU NAME', 'url' => 'http://menu-url.com', 'fa-icon' => ''],
     );
 
+    // Allow user to add additional buttons in the action menu, to call external APIs
+    $app['call_to_action'] = array(
+      'synonyms' => array(
+          0 => array(
+              'btn_name' => 'btn name 1',
+              'method' => 'put',
+              'url' => 'http://some-url/1.0/route/{id}',
+              'data'=> json_encode(array(
+                  'param' => value
+              )),
+              'callback' => 'refresh'
+          ),
+          1 => array(
+              'btn_name' => 'btn name 2',
+              'method' => 'post',
+              'url' => 'http://some-url/1.0/route/{id}',
+              'data'=> json_encode(array(
+                  'param' => value
+              )),
+              'callback' => 'refresh'
+          )
+      )
+    );
 
 Now, execute the command that will generate the CRUD backend:
 

@@ -38,3 +38,28 @@ $app['debug'] = true;
 	// array of REGEX column name to display for foreigner key insted of ID
 	// default used :'name','title','e?mail','username'
 $app['usr_search_names_foreigner_key'] = array();
+
+$app['call_to_action'] = array(
+/*
+  'synonyms' => array(
+      0 => array(
+          'btn_name' => 'btn name 1',
+          'method' => 'put',
+          'url' => 'http://some-url/1.0/route/{id}',
+          'data'=> json_encode(array(
+              'param' => value
+          )),
+          'callback' => 'refresh'
+      ),
+      1 => array(
+          'btn_name' => 'btn name 2',
+          'method' => 'post',
+          'url' => 'http://some-url/1.0/route/{id}',
+          'data'=> json_encode(array(
+              'param' => value
+          )),
+          'callback' => 'refresh'
+      )
+  )
+  */
+);

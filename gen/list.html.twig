@@ -17,7 +17,7 @@
 					{
 						"orderable": false,
 						"data": null,
-						"defaultContent": null,
+						"defaultContent": null
 					}
 				],
 				rowCallback: function( row, data ) {
@@ -27,9 +27,49 @@
                     {% for image_tag_info in image_tag_insertion %}
                     $('td:eq({{ image_tag_info.column_idx }})', row).append('<br /><img width="80" src="{{ image_tag_info.image_path }}' + data.{{ image_tag_info.column_name }} + '" />');
                     {% endfor %}
+
+                    {% for key, call_to_action_info in call_to_action %}
+                    $('td:eq({{ table_columns|length }})', row).append(
+                        '<a data-pk="{{primary_key}}" data-callback="{{ call_to_action_info.callback }}" data-params="{{ call_to_action_info.data }}" data-url="{{ call_to_action_info.url }}" data-method="{{ call_to_action_info.method }}" class="btn btn-info btn-xs btn-cta">{{ call_to_action_info.btn_name }}</a>'
+                    );
+                    {% endfor %}
+                    $('td:eq({{ table_columns|length }})', row).find('.btn-cta').click(function() {
+
+                        var url = $(this).data('url');
+                        var data = $(this).data('params');
+                        var method = $(this).data('method');
+                        var callback = $(this).data('callback');
+
+                        {% for columnIdx, table_column in table_columns %}
+                        url = replaceToken(url, "{{ table_column }}", $('td:eq({{ columnIdx }})', row).html());
+                        {% endfor %}
+
+                        $.ajax({
+                            method: method,
+                            url: url,
+                            data: JSON.stringify(data),
+                            processData: false,
+                            contentType: 'application/json'
+                        }).done(function( msg ) {
+                            if(typeof callback !== "undefined") {
+                                window[callback]();
+                            }
+                        }).error(function( request, status, msg ) {
+                            alert(msg);
+                        });
+                    });
 				}
 			});
+
         });
+
+        function replaceToken(string, token, value) {
+            return string.replace('{' + token + '}', value);
+        }
+
+        function refresh() {
+            window.location.reload();
+        }
 
         function confirm_delete(){
             if(!confirm("Are you sure? This action cannot be undone.")) { 
@@ -38,6 +78,7 @@
         }
 
     </script>
+
 {% endblock %}
 
 {% block container %}
