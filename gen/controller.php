@@ -150,8 +150,10 @@ __TABLECOLUMNS_ARRAY__
                 'column_name' => $table_column
             );
         }
-        if(isset($app['call_to_action']['__TABLENAME__' ])) {
-            $call_to_action = $app['call_to_action']['__TABLENAME__' ];
+        if(isset($app['call_to_action'])) {
+            if(isset($app['call_to_action']['__TABLENAME__' ])) {
+                $call_to_action = $app['call_to_action']['__TABLENAME__' ];
+            }
         }
     }
 
