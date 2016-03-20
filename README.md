@@ -16,6 +16,20 @@ It has been programmed with the Silex framework, so the resulting code is PHP.
 Installation
 ------------
 
+Here's examples how to use this project with docker
+
+    docker run -p <port-you-want>:80 -v /path/to/local/config.php:/var/www/html/config.php <image-id>
+
+    or with docker compose
+
+    project-name:
+      image: jnmik/crud-admin-generator:0.0.1
+      ports:
+      - <port-you-want>:80
+      volumes:
+      - /path/to/local/config.php:/var/www/html/config.php
+
+
 Clone the repository
 
     git clone https://github.com/jonseg/crud-admin-generator.git admingenerator
