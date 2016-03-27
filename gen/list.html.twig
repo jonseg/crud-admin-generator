@@ -6,8 +6,11 @@
 
     <!-- page script -->
     <script type="text/javascript">
+
+        var pageDataTable;
+
         $(function() {
-            $("#__TABLENAME___list").dataTable({
+            pageDataTable = $("#__TABLENAME___list").dataTable({
 				serverSide: true,
 				ajax: '__TABLENAME__/list',
 				columns: [
@@ -68,7 +71,8 @@
         }
 
         function refresh() {
-            window.location.reload();
+            pageDataTable.fnStandingRedraw();
+            //window.location.reload();
         }
 
         function confirm_delete(){
