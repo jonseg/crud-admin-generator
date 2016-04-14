@@ -23,12 +23,21 @@
 						"defaultContent": null
 					}
 				],
+                fnDrawCallback: function () {
+                    // callback after draw
+                },
 				rowCallback: function( row, data ) {
 					var actions = '<a href="__TABLENAME__/edit/' + data.{{primary_key}} + '" class="btn btn-primary btn-xs">Edit</a> <a href="__TABLENAME__/delete/' + data.{{primary_key}} + '" onclick="return confirm_delete();" class="btn btn-danger btn-xs">Delete</a>';
 					$('td:eq({{ table_columns|length }})', row).html( actions );
 
                     {% for image_tag_info in image_tag_insertion %}
                     $('td:eq({{ image_tag_info.column_idx }})', row).append('<br /><img width="80" src="{{ image_tag_info.image_path }}' + data.{{ image_tag_info.column_name }} + '" />');
+                    {% endfor %}
+
+                    {% for video_tag_info in video_tag_insertion %}
+                    $('td:eq({{ video_tag_info.column_idx }})', row).append('<br />' +
+                            '<video class="video-js vjs-default-skin" controls preload="auto" width="300" height="200" data-setup=\'{"example_option":true}\'>' +
+                            '<source src="{{ video_tag_info.video_path }}' + data.{{ video_tag_info.column_name }} + '" type="video/' + data.{{ video_tag_info.column_name }}.substr(data.{{ video_tag_info.column_name }}.lastIndexOf('.') + 1) + '" />');
                     {% endfor %}
 
                     {% for key, call_to_action_info in call_to_action %}
@@ -109,7 +118,7 @@
 
                         <div class="box">
                             <div class="box-header">
-                                
+                                <p>{{ table_intro }}</p>
                             </div><!-- /.box-header -->
 
                             <div class="box-body table-responsive">

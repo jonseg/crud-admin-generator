@@ -1324,6 +1324,11 @@ body > .header .logo .icon {
 .box .box-header > .box-tools {
   padding: 5px 10px 5px 5px;
 }
+
+.box .box-header p {
+    margin: 10px;
+}
+
 .box .box-body {
   padding: 10px;
   -webkit-border-top-left-radius: 0;

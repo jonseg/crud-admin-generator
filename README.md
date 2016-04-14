@@ -120,6 +120,16 @@ There is also more optional customization you can do
         //['name' => 'MENU NAME', 'url' => 'http://menu-url.com', 'fa-icon' => ''],
     );
 
+    // Allow user to transform column with video url to player
+    $app['video_fields'] = array(
+        //'your_table_name.your_column' => '',
+    );
+
+    // add introduction text on list page
+    $app['table_intro'] = array(
+      //'your_table_name' => "some text"
+    );
+
     // Allow user to add additional buttons in the action menu, to call external APIs
     $app['call_to_action'] = array(
       'synonyms' => array(

@@ -34,6 +34,16 @@ $app['menu_links'] = array(
     //['name' => 'MENU NAME', 'url' => 'http://menu-url.com', 'fa-icon' => ''],
 );
 
+// Allow user to transform column with video url to player
+$app['video_fields'] = array(
+    //'your_table_name.your_column' => '',
+);
+
+// add introduction text on list page
+$app['table_intro'] = array(
+  //'your_table_name' => "some text"
+);
+
 $app['debug'] = true;
 	// array of REGEX column name to display for foreigner key insted of ID
 	// default used :'name','title','e?mail','username'
