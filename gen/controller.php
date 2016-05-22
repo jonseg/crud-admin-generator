@@ -145,19 +145,23 @@ __TABLECOLUMNS_ARRAY__
     $table_intro = array();
 
     foreach($table_columns as $idx => $table_column) {
-        if(isset($app['image_fields']['__TABLENAME__' . '.' . $table_column])) {
-            $image_tag_insertion[] = array(
-                'column_idx' => $idx,
-                'image_path' => $app['image_fields']['__TABLENAME__' . '.' . $table_column],
-                'column_name' => $table_column
-            );
+        if(isset($app['image_fields'])) {
+            if(isset($app['image_fields']['__TABLENAME__' . '.' . $table_column])) {
+                $image_tag_insertion[] = array(
+                    'column_idx' => $idx,
+                    'image_path' => $app['image_fields']['__TABLENAME__' . '.' . $table_column],
+                    'column_name' => $table_column
+                );
+            }
         }
-        if(isset($app['video_fields']['__TABLENAME__' . '.' . $table_column])) {
-            $video_tag_insertion[] = array(
-                'column_idx' => $idx,
-                'video_path' => $app['video_fields']['__TABLENAME__' . '.' . $table_column],
-                'column_name' => $table_column
-            );
+        if(isset($app['video_fields'])) {
+            if(isset($app['video_fields']['__TABLENAME__' . '.' . $table_column])) {
+                $video_tag_insertion[] = array(
+                    'column_idx' => $idx,
+                    'video_path' => $app['video_fields']['__TABLENAME__' . '.' . $table_column],
+                    'column_name' => $table_column
+                );
+            }
         }
     }
 
