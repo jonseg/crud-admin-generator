@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 $app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Request $request) use ($app) {  
     $start = 0;
-    $vars = $request->query->all();
+    $vars = $request->request->all();
     $qsStart = (int)$vars["start"];
     $search = $vars["search"];
     $order = $vars["order"];
