@@ -15,7 +15,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/../../src/app.php';
 
 
-__BASE_INCLUDES__
+__BASE_INCLUDES__;
 
 
 $app->match('/', function () use ($app) {
