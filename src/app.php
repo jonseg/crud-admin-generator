@@ -16,11 +16,16 @@ class queryData {
 	public $recordsFiltered;
 	public $data;
 
-	function queryData() {
+	function __construct() {
 	}
 }
 
 use Silex\Application;
+use Dotenv\Dotenv;
+
+// fetch config from .env file
+$dotenv = new Dotenv(__DIR__.'/..');
+$dotenv->load();
 
 $app = new Application();
 
@@ -38,11 +43,11 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 		'dbs.options' => array(
 			'db' => array(
-				'driver'   => 'pdo_mysql',
-				'dbname'   => 'DATABASE_NAME',
-				'host'     => '127.0.0.1',
-				'user'     => 'DATABASE_USER',
-				'password' => 'DATABASE_PASS',
+				'driver'   => getenv('DB_DRIVER') ?: 'pdo_mysql',
+				'dbname'   => getenv('DB_NAME') ?: 'my-db',
+				'host'     => getenv('DB_HOST') ?: '127.0.0.1',
+				'user'     => getenv('DB_USER') ?: 'root',
+				'password' => getenv('DB_PASSWORD') ?: '',
 				'charset'  => 'utf8',
 			),
 		)
