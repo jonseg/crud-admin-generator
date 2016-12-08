@@ -11,11 +11,19 @@
         "symfony/validator": "2.5.*",
         "symfony/config": "2.5.*",
         "symfony/translation": "2.5.*",
-        "symfony/locale": "2.5.*"
+        "symfony/locale": "2.5.*",
+        "vlucas/phpdotenv": "^2.4"
     },
     "minimum-stability": "dev",
+    "scripts": {
+        "post-root-package-install": [
+            "php -r \"copy('.env.example', '.env');\""
+        ],
+        "serve": [
+            "php -S localhost:8888 -t web"
+        ]
+    },
     "autoload": {
         "psr-0": { "": "src/" }
     }    
 }
-
