@@ -53,25 +53,12 @@ This is an example of VirtualHost:
 You can customize the url using the .htaccess file, maybe this will help you:
 [http://stackoverflow.com/questions/24952846/how-do-i-remove-the-web-from-my-url/24953439#24953439](http://stackoverflow.com/questions/24952846/how-do-i-remove-the-web-from-my-url/24953439#24953439)
 
+Database Configuration
+---------------------
+Configuration to connect to database is stored inside `.env` file. If the `.env` file is not in available in root of your project directory, you can rename `.env.example` to `.env` and adjust the value there according to your database.
 
 Generate CRUD backend
 ---------------------
-
-Edit the file /path_to/admingenerator/src/app.php and set your database conection data:
-
-    $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-        'dbs.options' => array(
-            'db' => array(
-                'driver'   => 'pdo_mysql',
-                'dbname'   => 'DATABASE_NAME',
-                'host'     => 'localhost',
-                'user'     => 'DATABASE_USER',
-                'password' => 'DATABASE_PASS',
-                'charset'  => 'utf8',
-            ),
-        )
-    ));
-
 
 You need to set the url of the resources folder.
 
@@ -104,6 +91,15 @@ The generated code is fully configurable and editable, you just have to edit the
 
 It has generated a folder for each database table.
 
+Serve Using Built-in PHP Server
+--------------------
+If you want to serve this project using built-in PHP server, run: `composer run serve`. It will serve the project from localhost:8888. To change the port to something other than 8888, you can edit it inside `composer.json`:
+
+```
+"serve": [
+	"php -S localhost:8888 -t web"
+]
+```
 
 Contributing
 ------------
