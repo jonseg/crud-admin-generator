@@ -318,7 +318,7 @@ __TABLECOLUMNS_TYPE_ARRAY__
     $mpdf->WriteHTML($stylesheet,1);
     $mpdf->WriteHTML('.table {
     border-radius: 5px;
-    width: 50%;
+    width: 100%;
     margin: 0px auto;
     float: none;
 }',1);
