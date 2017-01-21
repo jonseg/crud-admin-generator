@@ -142,7 +142,7 @@ __TABLECOLUMNS_ARRAY__
     $image_tag_insertion = array();
     $video_tag_insertion = array();
     $call_to_action = array();
-    $table_intro = array();
+    $table_intro = '';
 
     foreach($table_columns as $idx => $table_column) {
         if(isset($app['image_fields'])) {
@@ -176,6 +176,11 @@ __TABLECOLUMNS_ARRAY__
             $table_intro = $app['table_intro']['__TABLENAME__'];
         }
     }
+
+    if(!is_string($table_intro)) {
+        $table_intro = '';
+    }
+
 
     return $app['twig']->render('__TABLENAME__/list.html.twig', array(
     	"table_columns" => $table_columns,
