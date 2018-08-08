@@ -70,7 +70,7 @@ __TABLECOLUMNS_TYPE_ARRAY__
         $i = $i + 1;
     }
     
-    $recordsTotal = $app['db']->executeQuery("SELECT * FROM `__TABLENAME__`" . $whereClause . $orderClause)->rowCount();
+    $recordsTotal = $app['db']->fetchColumn("SELECT COUNT(*) FROM `__TABLENAME__`" . $whereClause . $orderClause, array(), 0);
     
     $find_sql = "SELECT * FROM `__TABLENAME__`". $whereClause . $orderClause . " LIMIT ". $index . "," . $rowsPerPage;
     $rows_sql = $app['db']->fetchAll($find_sql, array());
