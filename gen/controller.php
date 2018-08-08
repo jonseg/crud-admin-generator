@@ -65,7 +65,7 @@ __TABLECOLUMNS_TYPE_ARRAY__
             $whereClause =  $whereClause . " OR"; 
         }
         
-        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
+        $whereClause =  $whereClause . " `" . $col . "` LIKE '%". $searchValue ."%'";
         
         $i = $i + 1;
     }
