@@ -11,7 +11,8 @@
         "symfony/validator": "2.5.*",
         "symfony/config": "2.5.*",
         "symfony/translation": "2.5.*",
-        "symfony/locale": "2.5.*"
+        "symfony/locale": "2.5.*",
+        "mpdf/mpdf": "6.1.0"
     },
     "minimum-stability": "dev",
     "autoload": {

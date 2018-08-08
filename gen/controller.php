@@ -13,6 +13,8 @@
 
 require_once __DIR__.'/../../../vendor/autoload.php';
 require_once __DIR__.'/../../../src/app.php';
+require_once __DIR__.'/../../../src/utils.php';
+
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -253,7 +255,6 @@ __FIELDS_FOR_FORM__
 ->bind('__TABLENAME___edit');
 
 
-
 $app->match('/__TABLENAME__/delete/{id}', function ($id) use ($app) {
 
     $find_sql = "SELECT * FROM `__TABLENAME__` WHERE `__TABLE_PRIMARYKEY__` = ?";
@@ -286,6 +287,45 @@ $app->match('/__TABLENAME__/delete/{id}', function ($id) use ($app) {
 
 
 
+$app->match('/__TABLENAME__/downloadList', function (Symfony\Component\HttpFoundation\Request $request) use($app){
+    
+    $table_columns = array(
+__TABLECOLUMNS_ARRAY__
+    );
+    
+    $table_columns_type = array(
+__TABLECOLUMNS_TYPE_ARRAY__
+    );   
+
+    $types_to_cut = array('blob');
+    $index_of_types_to_cut = array();
+    foreach ($table_columns_type as $key => $value) {
+        if(in_array($value, $types_to_cut)){
+            unset($table_columns[$key]);
+        }
+    }
+
+    $columns_to_select = implode(',', array_map(function ($row){
+        return '`'.$row.'`';
+    }, $table_columns));
+     
+    $find_sql = "SELECT ".$columns_to_select." FROM `__TABLENAME__`";
+    $rows_sql = $app['db']->fetchAll($find_sql, array());
+  
+    $mpdf = new mPDF();
+
+    $stylesheet = file_get_contents('../web/resources/css/bootstrap.min.css'); // external css
+    $mpdf->WriteHTML($stylesheet,1);
+    $mpdf->WriteHTML('.table {
+    border-radius: 5px;
+    width: 100%;
+    margin: 0px auto;
+    float: none;
+}',1);
+
+    $mpdf->WriteHTML(build_table($rows_sql));
+    $mpdf->Output();
+})->bind('__TABLENAME___downloadList');
 
 
 
