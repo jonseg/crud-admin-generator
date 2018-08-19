@@ -41,7 +41,7 @@ $app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Re
     
     $orderClause = "";
     if($orderValue) {
-        $orderClause = " ORDER BY ". $columns[(int)$orderValue['column']]['data'] . " " . $orderValue['dir'];
+        $orderClause = " ORDER BY `". $columns[(int)$orderValue['column']]['data'] . "` " . $orderValue['dir'];
     }
     
     $table_columns = array(
@@ -65,7 +65,7 @@ __TABLECOLUMNS_TYPE_ARRAY__
             $whereClause =  $whereClause . " OR"; 
         }
         
-        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
+        $whereClause =  $whereClause . " `" . $col . "` LIKE '%". $searchValue ."%'";
         
         $i = $i + 1;
     }
