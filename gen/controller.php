@@ -65,7 +65,7 @@ __TABLECOLUMNS_TYPE_ARRAY__
             $whereClause =  $whereClause . " OR"; 
         }
         
-        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
+        $whereClause =  $whereClause . " `" . $col . "` LIKE '%". $searchValue ."%'";
         
         $i = $i + 1;
     }
@@ -139,11 +139,58 @@ $app->match('/__TABLENAME__', function () use ($app) {
 __TABLECOLUMNS_ARRAY__
     );
 
-    $primary_key = "__TABLE_PRIMARYKEY__";	
+    $primary_key = "__TABLE_PRIMARYKEY__";
+
+    $image_tag_insertion = array();
+    $video_tag_insertion = array();
+    $call_to_action = array();
+    $table_intro = '';
+
+    foreach($table_columns as $idx => $table_column) {
+        if(isset($app['image_fields'])) {
+            if(isset($app['image_fields']['__TABLENAME__' . '.' . $table_column])) {
+                $image_tag_insertion[] = array(
+                    'column_idx' => $idx,
+                    'image_path' => $app['image_fields']['__TABLENAME__' . '.' . $table_column],
+                    'column_name' => $table_column
+                );
+            }
+        }
+        if(isset($app['video_fields'])) {
+            if(isset($app['video_fields']['__TABLENAME__' . '.' . $table_column])) {
+                $video_tag_insertion[] = array(
+                    'column_idx' => $idx,
+                    'video_path' => $app['video_fields']['__TABLENAME__' . '.' . $table_column],
+                    'column_name' => $table_column
+                );
+            }
+        }
+    }
+
+    if(isset($app['call_to_action'])) {
+        if(isset($app['call_to_action']['__TABLENAME__'])) {
+            $call_to_action = $app['call_to_action']['__TABLENAME__'];
+        }
+    }
+
+    if(isset($app['table_intro'])) {
+        if(isset($app['table_intro']['__TABLENAME__'])) {
+            $table_intro = $app['table_intro']['__TABLENAME__'];
+        }
+    }
+
+    if(!is_string($table_intro)) {
+        $table_intro = '';
+    }
+
 
     return $app['twig']->render('__TABLENAME__/list.html.twig', array(
     	"table_columns" => $table_columns,
-        "primary_key" => $primary_key
+        "primary_key" => $primary_key,
+        "image_tag_insertion" => $image_tag_insertion,
+        "video_tag_insertion" => $video_tag_insertion,
+        "call_to_action" => $call_to_action,
+        "table_intro" => $table_intro
     ));
         
 })

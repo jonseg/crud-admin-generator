@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-        <title>{% block title %}Admin Generator{% endblock %}</title>
+        <title>{% block title %}{{ app.application_name }}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         {% block head_javascripts %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ app.asset_path }}/favicon.ico" />

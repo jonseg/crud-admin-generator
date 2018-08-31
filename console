@@ -14,6 +14,7 @@
 require_once __DIR__.'/vendor/autoload.php';
 
 $app = require __DIR__.'/src/app.php';
+require_once(__DIR__.'/config.php');
 $console = require __DIR__.'/src/console.php';
 $console->run();
 
