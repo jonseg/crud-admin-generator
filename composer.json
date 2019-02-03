@@ -1,4 +1,13 @@
 {
+    "name": "jonseg/crud-admin-generator",
+    "description": "Admin CRUD Generator - http://crud-admin-generator.com",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Jon Segador",
+            "email": "info@jonsegador.com"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "silex/silex": "~1.2",
