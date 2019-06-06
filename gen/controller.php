@@ -64,15 +64,15 @@ __TABLECOLUMNS_TYPE_ARRAY__
         if ($i > 0) {
             $whereClause =  $whereClause . " OR"; 
         }
-        
-        $whereClause =  $whereClause . " " . $col . " LIKE '%". $searchValue ."%'";
-        
+
+        $whereClause =  $whereClause . " " . $col . "::varchar(255) LIKE '%". $searchValue ."%'";
+
         $i = $i + 1;
     }
-    
-    $recordsTotal = $app['db']->fetchColumn("SELECT COUNT(*) FROM `__TABLENAME__`" . $whereClause . $orderClause, array(), 0);
-    
-    $find_sql = "SELECT * FROM `__TABLENAME__`". $whereClause . $orderClause . " LIMIT ". $index . "," . $rowsPerPage;
+
+    $recordsTotal = $app['db']->fetchColumn("SELECT COUNT(*) FROM __TABLENAME__" . $whereClause, array(), 0);
+
+    $find_sql = "SELECT * FROM __TABLENAME__". $whereClause . $orderClause . " OFFSET ". $index . " LIMIT " . $rowsPerPage;
     $rows_sql = $app['db']->fetchAll($find_sql, array());
 
     foreach($rows_sql as $row_key => $row_sql){
@@ -172,8 +172,8 @@ __FIELDS_FOR_FORM__
         if ($form->isValid()) {
             $data = $form->getData();
 
-            $update_query = "INSERT INTO `__TABLENAME__` (__INSERT_QUERY_FIELDS__) VALUES (__INSERT_QUERY_VALUES__)";
-            $app['db']->executeUpdate($update_query, array(__INSERT_EXECUTE_FIELDS__));            
+            $update_query = "INSERT INTO __TABLENAME__ (__INSERT_QUERY_FIELDS__) VALUES (__INSERT_QUERY_VALUES__)";
+            $app['db']->executeUpdate($update_query, array(__INSERT_EXECUTE_FIELDS__));
 
 
             $app['session']->getFlashBag()->add(
@@ -198,7 +198,7 @@ __FIELDS_FOR_FORM__
 
 $app->match('/__TABLENAME__/edit/{id}', function ($id) use ($app) {
 
-    $find_sql = "SELECT * FROM `__TABLENAME__` WHERE `__TABLE_PRIMARYKEY__` = ?";
+    $find_sql = "SELECT * FROM __TABLENAME__ WHERE __TABLE_PRIMARYKEY__ = ?";
     $row_sql = $app['db']->fetchAssoc($find_sql, array($id));
 
     if(!$row_sql){
@@ -231,8 +231,8 @@ __FIELDS_FOR_FORM__
         if ($form->isValid()) {
             $data = $form->getData();
 
-            $update_query = "UPDATE `__TABLENAME__` SET __UPDATE_QUERY_FIELDS__ WHERE `__TABLE_PRIMARYKEY__` = ?";
-            $app['db']->executeUpdate($update_query, array(__UPDATE_EXECUTE_FIELDS__, $id));            
+            $update_query = "UPDATE __TABLENAME__ SET __UPDATE_QUERY_FIELDS__ WHERE __TABLE_PRIMARYKEY__ = ?";
+            $app['db']->executeUpdate($update_query, array(__UPDATE_EXECUTE_FIELDS__, $id));
 
 
             $app['session']->getFlashBag()->add(
@@ -250,18 +250,18 @@ __FIELDS_FOR_FORM__
         "form" => $form->createView(),
         "id" => $id
     ));
-        
+
 })
 ->bind('__TABLENAME___edit');
 
 
 $app->match('/__TABLENAME__/delete/{id}', function ($id) use ($app) {
 
-    $find_sql = "SELECT * FROM `__TABLENAME__` WHERE `__TABLE_PRIMARYKEY__` = ?";
+    $find_sql = "SELECT * FROM __TABLENAME__ WHERE __TABLE_PRIMARYKEY__ = ?";
     $row_sql = $app['db']->fetchAssoc($find_sql, array($id));
 
     if($row_sql){
-        $delete_query = "DELETE FROM `__TABLENAME__` WHERE `__TABLE_PRIMARYKEY__` = ?";
+        $delete_query = "DELETE FROM __TABLENAME__ WHERE __TABLE_PRIMARYKEY__ = ?";
         $app['db']->executeUpdate($delete_query, array($id));
 
         $app['session']->getFlashBag()->add(
@@ -305,13 +305,13 @@ __TABLECOLUMNS_TYPE_ARRAY__
         }
     }
 
-    $columns_to_select = implode(',', array_map(function ($row){
-        return '`'.$row.'`';
+    $columns_to_select = implode(', ', array_map(function ($row){
+        return $row;
     }, $table_columns));
-     
-    $find_sql = "SELECT ".$columns_to_select." FROM `__TABLENAME__`";
+
+    $find_sql = "SELECT ".$columns_to_select." FROM __TABLENAME__";
     $rows_sql = $app['db']->fetchAll($find_sql, array());
-  
+
     $mpdf = new mPDF();
 
     $stylesheet = file_get_contents('../web/resources/css/bootstrap.min.css'); // external css
