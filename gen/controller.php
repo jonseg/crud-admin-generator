@@ -69,10 +69,10 @@ __TABLECOLUMNS_TYPE_ARRAY__
 
         $i = $i + 1;
     }
-    
-    $recordsTotal = $app['db']->fetchColumn("SELECT COUNT(*) FROM `__TABLENAME__`" . $whereClause . $orderClause, array(), 0);
-    
-    $find_sql = "SELECT * FROM `__TABLENAME__`". $whereClause . $orderClause . " LIMIT ". $index . "," . $rowsPerPage;
+
+    $recordsTotal = $app['db']->fetchColumn("SELECT COUNT(*) FROM __TABLENAME__" . $whereClause, array(), 0);
+
+    $find_sql = "SELECT * FROM __TABLENAME__". $whereClause . $orderClause . " OFFSET ". $index . " LIMIT " . $rowsPerPage;
     $rows_sql = $app['db']->fetchAll($find_sql, array());
 
     foreach($rows_sql as $row_key => $row_sql){
