@@ -48,7 +48,7 @@ $console
 			EOT;
 			$getTableColumnsQuery .= $dbTable['name'];
 			$getTableColumnsQuery .= <<<EOT
-			' AND NOT EXISTS (SELECT * FROM table_column_constraints other WHERE other.column_name=given.column_name AND given.constraint_type!='PRIMARY KEY' AND other.constraint_type='PRIMARY KEY') ORDER BY constraint_type;
+			' AND NOT EXISTS (SELECT * FROM table_column_constraints other WHERE other.column_name=given.column_name AND given.constraint_type!='PRIMARY KEY' AND other.constraint_type='PRIMARY KEY');
 			EOT;
 			$getTableColumnsResult = $app['db']->fetchAll($getTableColumnsQuery, array());
 
