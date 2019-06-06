@@ -25,7 +25,7 @@ $console
 	->setDescription("Generate administrator")
 	->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
 
-		$getTablesQuery = "SHOW TABLES";
+		$getTablesQuery = "SELECT tablename FROM pg_catalog.pg_tables where schemaname='public';";
 		$getTablesResult = $app['db']->fetchAll($getTablesQuery, array());
 
 		$_dbTables = array();
@@ -39,10 +39,17 @@ $console
 				"name" => reset($getTableResult),
 				"columns" => array()
 			);
+
 		}
 
 		foreach($dbTables as $dbTableKey => $dbTable){
-			$getTableColumnsQuery = "SHOW COLUMNS FROM `" . $dbTable['name'] . "`";
+			$getTableColumnsQuery = <<<EOT
+			SELECT column_name as "Field", data_type AS "Type", is_nullable AS "Null", CASE WHEN constraint_type='PRIMARY KEY' THEN 'PRI' ELSE NULL END AS "Key", column_default AS "Default", CASE WHEN column_default LIKE 'nextval(%' THEN 'auto_increment' ELSE '' END AS "Extra" FROM table_column_constraints as given WHERE given.table_name = '
+			EOT;
+			$getTableColumnsQuery .= $dbTable['name'];
+			$getTableColumnsQuery .= <<<EOT
+			' AND NOT EXISTS (SELECT * FROM table_column_constraints other WHERE other.column_name=given.column_name AND given.constraint_type!='PRIMARY KEY' AND other.constraint_type='PRIMARY KEY') ORDER BY constraint_type;
+			EOT;
 			$getTableColumnsResult = $app['db']->fetchAll($getTableColumnsQuery, array());
 
 			foreach($getTableColumnsResult as $getTableColumnResult){
@@ -173,9 +180,9 @@ $console
 					$TABLECOLUMNS_INITIALDATA_EMPTY_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => '', \n";
 					$TABLECOLUMNS_INITIALDATA_ARRAY .= "\t\t" . "'". $table_column['name'] . "' => \$row_sql['".$table_column['name']."'], \n";
 
-					$INSERT_QUERY_FIELDS[] = "`" . $table_column['name'] . "`";
+					$INSERT_QUERY_FIELDS[] = $table_column['name'];
 					$INSERT_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
-					$UPDATE_QUERY_FIELDS[] = "`" . $table_column['name'] . "` = ?";
+					$UPDATE_QUERY_FIELDS[] = $table_column['name'] . " = ?";
 					$UPDATE_EXECUTE_FIELDS[] = "\$data['" . $table_column['name'] . "']";
 
 					if(strpos($table_column['type'], 'text') !== false){

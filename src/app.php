@@ -38,8 +38,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 		'dbs.options' => array(
 			'db' => array(
-				'driver'   => 'pdo_mysql',
 				'dbname'   => 'DATABASE_NAME',
+				'driver'   => 'pdo_pgsql',
 				'host'     => '127.0.0.1',
 				'user'     => 'DATABASE_USER',
 				'password' => 'DATABASE_PASS',
