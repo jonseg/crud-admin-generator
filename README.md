@@ -32,15 +32,16 @@ Install vendors:
 
 You need point the document root of your virtual host to /path_to/admingenerator/web
 
-This is an example of VirtualHost:
+These are examples for VirtualHosts
+
+Apache 2.x:
 
     <VirtualHost *:80>
         DocumentRoot /path_to/admingenerator/web
         DirectoryIndex index.php
         <Directory "/path_to/admingenerator/web">
             Options Indexes FollowSymLinks
-            Order Allow,Deny
-            Allow from all
+            Require alle granted
             AllowOverride all
             <IfModule mod_php5.c>
                 php_admin_flag engine on
@@ -49,6 +50,13 @@ This is an example of VirtualHost:
             </ifModule>
         </Directory>
     </VirtualHost>
+    
+Lighttpd (a simple one, running with php-fpm on a pi-hole server):
+
+    $HTTP["host"] == "myhostname.example.com" {
+	    server.document-root = "/path_to/admingenerator/web/"
+	    url.access-allow = ( "" )
+    }
     
 You can customize the url using the .htaccess file, maybe this will help you:
 [http://stackoverflow.com/questions/24952846/how-do-i-remove-the-web-from-my-url/24953439#24953439](http://stackoverflow.com/questions/24952846/how-do-i-remove-the-web-from-my-url/24953439#24953439)
