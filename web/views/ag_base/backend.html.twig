@@ -80,18 +80,26 @@
     <script type="text/javascript">
         $(function() {
             var jsonCount = 1;
+	    var formContainers = {};
             var BrutusinForms = brutusin["json-forms"];
             $(".textarea").each(function(){
 		// try to get json schema if available
 		var classSelect = $(this).parents('form').find('select[name*="class_"]');
-		if(classSelect.length){
-			var classFormName = classSelect.attr('name');
-			var classId = classSelect.val();
+		var textInput = this;
+		classSelect.on('change',function(){
+			var classFormName = $(this).attr('name');
+			var classId = $(this).val();
+			var containerId = classFormName + '-container';
 			if(classId != undefined && classId > 0){
-				var textInput = this;
 				var jsonSchema = $.getJSON("/json-schema/" + encodeURIComponent(classFormName) + '/' + classId, function(schema){
-					var container = $(textInput).after('<div id="jsonForm' + jsonCount + '"/>');
-					var domContainer = document.getElementById('jsonForm' + jsonCount);
+					if(containerId in formContainers) {
+						var container = formContainers[containerId];
+					}else{
+						var container = $('<div id="' + containerId + '"/>');
+						container.insertAfter(textInput);
+						formContainers[containerId] = container;
+					}
+					var domContainer = document.getElementById(containerId);
 					var bf = BrutusinForms.create(schema);
 					var initData = {};
 					try{
@@ -101,8 +109,9 @@
 					}
 					$(textInput).attr('required',false);
 					$(textInput).hide();
+					$(container).html('');
 					bf.render(domContainer, initData);
-					$(textInput).parents('form').on('submit', function(){
+					$(textInput).parents('form').off('submit.brutusin').on('submit.brutusin', function(){
 						if(bf.validate()){
 							$(textInput).val(JSON.stringify(bf.getData()));
 						}else{
@@ -113,11 +122,10 @@
 					});
 				});
 			}else{
-				$(this).hide();
+				$(textInput).hide();
 			}
-                }else{
-                    $(this).wysihtml5();
-                }
+		});
+		classSelect.change();
             });
         });
 
