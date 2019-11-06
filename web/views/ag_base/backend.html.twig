@@ -100,12 +100,13 @@
 						formContainers[containerId] = container;
 					}
 					var domContainer = document.getElementById(containerId);
-					var bf = BrutusinForms.create(schema);
+					var bf = BrutusinForms.create(schema.schema);
 					var initData = {};
 					try{
 						initData = JSON.parse($(textInput).val());
 					} catch(e) {
-						alert('Initial JSON data was invalid, ignoring it. If you think it should be OK then DO NOT SAVE THIS FORM!');
+						alert('Initial JSON data was invalid, using defaults. If you think it should be OK then DO NOT SAVE THIS FORM!');
+						initData = schema.default;
 					}
 					$(textInput).attr('required',false);
 					$(textInput).hide();
