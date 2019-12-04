@@ -1,2 +1,8 @@
 vendor/
 composer.lock
+web/controllers/*
+!web/controllers/.htaccess
+web/views/*/*
+web/views/menu.html.twig
+web/db.php
+
