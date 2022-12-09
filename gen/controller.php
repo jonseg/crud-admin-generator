@@ -11,11 +11,6 @@
  */
 
 
-require_once __DIR__.'/../../../vendor/autoload.php';
-require_once __DIR__.'/../../../src/app.php';
-require_once __DIR__.'/../../../src/utils.php';
-
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 $app->match('/__TABLENAME__/list', function (Symfony\Component\HttpFoundation\Request $request) use ($app) {  

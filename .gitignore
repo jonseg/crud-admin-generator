@@ -1,2 +1,10 @@
 vendor/
 composer.lock
+web/controllers/*
+!web/controllers/.htaccess
+web/views/*
+!/web/views/ag_*
+!/web/views/ag_base/**
+web/views/menu.html.twig
+web/db.php
+

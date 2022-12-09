@@ -1,0 +1,22 @@
+--- Util/PropertyPath.php.orig
++++ Util/PropertyPath.php
+@@ -38,7 +38,7 @@ class PropertyPath
+     public static function append($basePath, $subPath)
+     {
+         if ('' !== (string) $subPath) {
+-            if ('[' === $subPath{0}) {
++            if ('[' === $subPath[0]) {
+                 return $basePath.$subPath;
+             }
+ 
+--- Validator/RecursiveContextualValidator.php.orig
++++ Validator/RecursiveContextualValidator.php
+@@ -728,7 +728,7 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
+         // The $cascadedGroups property is set, if the "Default" group is
+         // overridden by a group sequence
+         // See validateClassNode()
+-        $cascadedGroups = count($cascadedGroups) > 0
++        $cascadedGroups = !empty($cascadedGroups)
+             ? $cascadedGroups
+             : $groups;
+ 
