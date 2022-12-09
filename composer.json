@@ -21,11 +21,18 @@
         "symfony/config": "2.5.*",
         "symfony/translation": "2.5.*",
         "symfony/locale": "2.5.*",
-        "mpdf/mpdf": "6.1.0"
+        "mpdf/mpdf": "6.1.0",
+        "vaimo/composer-patches": "^4"
     },
     "minimum-stability": "dev",
     "autoload": {
         "psr-0": { "": "src/" }
-    }    
+    },
+    "extra": {
+        "patches": {
+            "symfony/validator": {
+                "Fixes for PHP 8": "patches/GJHH176-fix-old-symfony-for-php-8.1.patch"
+            }
+        }
+    }
 }
-
